@@ -1,0 +1,59 @@
+{% extends 'base.html' %} {% block container %}
+<style>
+  .room-img {
+    max-height: 300px;
+  }
+  .room-main-div:hover {
+    box-shadow: 0 0 5px rgb(0, 0, 0);
+  }
+</style>
+<div class="row">
+  <div class="col-12 row mt-4">
+    <nav
+      style="--bs-breadcrumb-divider: '>'"
+      aria-label="breadcrumb"
+      class="col-10 mx-auto h5"
+    >
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{{curl}}flatType/">Flat Type</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">1 BHK</li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-12 row">
+    {% for food in "abc" %}
+        <div class="
+                row
+                col-10
+                border
+                rounded
+                room-main-div
+                border-dark
+                mx-auto
+                px-0
+                my-2
+            ">
+            <div class="col-4 px-0">
+                <img class="img-fluid w-100 room-img" src="https://apollo-singapore.akamaized.net/v1/files/ft63a2652p8a2-IN/image;s=272x0" />
+            </div>
+            <div class="col-8 p-3 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="h4">43,Kandilpura</div>
+                    <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut, placeat. Enim asperiores earum dolorum quidem omnis accusantium accusamus veniam, dignissimos maiores illo repellendus in officiis sit voluptate veritatis molestias eaque!</div>
+                </div>
+                <div class="text-end d-flex  justify-content-between">
+                    <div><span class="align-middle ">&#8377; 405.43</span></div>
+                    <div>
+                        <button class="btn btn-success"> <span class="mx-2">Book</span
+                        ><i class="mx-2 fas fa-plus-circle"></i>
+                    </button>
+                    </div>
+                </div>
+            </div>
+            </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

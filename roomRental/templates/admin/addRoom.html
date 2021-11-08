@@ -1,0 +1,113 @@
+{% extends 'admin/adminHome.html' %} {% block container %}
+<div class="row p-5">
+  <form
+    id="add-flat"
+    enctype="multipart/form-data"
+    class="row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
+    novalidate
+  >
+    {%csrf_token %}
+    <div class="col-12 my-3 form-check">
+      <label style="font-size: 12px" class="form-label" for="flat-id"
+        >Flat Type</label
+      >
+      <select
+        class="custom-select col-11 ml-3 form-control"
+        name="flat_id"
+        id="flat-id"
+      >
+        <option selected>Select Flat</option>
+        {% for flat in flatList %}
+        <option value="{{flat.0}}">{{flat.1}}</option>
+        {% endfor %}
+      </select>
+      <div class="ml-3 invalid-feedback">Please fill out this field.</div>
+    </div>
+
+    <div class="col-12 my-3">
+      <label for="room-desc" class="form-label">Room Description</label>
+      <textarea
+        rows="4"
+        class="form-control"
+        name="room_desc"
+        id="room-desc"
+        placeholder="Enter Room Description"
+        required
+      ></textarea>
+      <div class="invalid-feedback">Please enter valid room description.</div>
+      <div class="valid-feedback">Looks good.</div>
+    </div>
+    <div class="col-12 my-3">
+      <label for="room-add" class="form-label">Room Address</label>
+      <textarea
+        rows="4"
+        class="form-control"
+        name="room_add"
+        id="room-add"
+        placeholder="Enter Room Address"
+        required
+      ></textarea>
+      <div class="invalid-feedback">Please enter valid room Address.</div>
+      <div class="valid-feedback">Looks good.</div>
+    </div>
+
+    <div class="col-12 my-3">
+      <label for="room-price" class="form-label">Room Price</label>
+      <input
+        type="text"
+        class="form-control"
+        id="room-price"
+        name="room_price"
+        placeholder="Enter Room Price"
+        required
+      />
+      <div class="invalid-feedback">Please enter valid room price.</div>
+      <div class="valid-feedback">Looks good.</div>
+    </div>
+    <div class="col-12 my-3">
+      <label class="form-label" for="room-img">Room Icon</label>
+      <input
+        class="form-control-file"
+        id="room-img"
+        type="file"
+        name="room_img"
+        required
+      />
+      <div class="ml-3 invalid-feedback">Please choose any file.</div>
+    </div>
+    <div class="col-12 my-3 text-center">
+      <button class="mx-auto btn btn-success">Add Flat</button>
+    </div>
+  </form>
+</div>
+<script>
+  var file;
+  $('input[type="file"]').change(function (e) {
+    file = e.target.files[0];
+  });
+  const addFlat = (event) => {
+    event.preventDefault();
+    var formData = new FormData();
+    formData.append("flat_id", $("#flat-id").val());
+    formData.append("room_desc", $("#room-desc").val());
+    formData.append("room_price", $("#room-price").val());
+    formData.append("room_add", $("#room-add").val());
+    formData.append("room_img", file);
+    formData.append(
+      "csrfmiddlewaretoken",
+      $("input[name=csrfmiddlewaretoken]").val()
+    );
+    fetch("{{curl}}myadmin/addRoom/", {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    })
+      .then((response) => response.json())
+      .then((json) => console.log(json))
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  $("#add-flat").submit(addFlat);
+</script>
+{% endblock %}

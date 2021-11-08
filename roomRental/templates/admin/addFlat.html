@@ -1,0 +1,48 @@
+{% extends 'admin/adminHome.html' %} {% block container %}
+<div class="row p-5">
+<div>{{curl}}myadmin/addFlat/</div>
+  <form
+    id="add-flat"
+    enctype="multipart/form-data"
+    class="row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
+    novalidate
+  >
+    {%csrf_token %}
+    <div class="col-12 my-3">
+      <label for="flat-name" class="form-label">Flat Label</label>
+      <input
+        type="text"
+        class="form-control"
+        id="flat-name"
+        name="flat_name"
+        placeholder="Enter Flat Label"
+        required
+      />
+      <div class="invalid-feedback">Please enter valid flat name.</div>
+      <div class="valid-feedback">Looks good.</div>
+    </div>
+    <div class="col-12 my-3 text-center">
+      <button class="mx-auto btn btn-success">Add Flat</button>
+    </div>
+  </form>
+</div>
+<script>
+  const addFlat = (event) => {
+    event.preventDefault();
+    var formData = new FormData();
+    formData.append("flat_name",$("#flat-name").val())
+    formData.append("csrfmiddlewaretoken",$("input[name=csrfmiddlewaretoken]").val())
+    fetch("{{curl}}myadmin/addFlat/", {
+      method: "POST",
+      body: formData,
+      credentials: 'same-origin',
+    })
+      .then((response) => response.json())
+      .then((json) => console.log(json))
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  $("#add-flat").submit(addFlat);
+</script>
+{% endblock %}
