@@ -1,27 +1,19 @@
-{% extends 'base.html' %} {% block container %}
+{% extends 'base.html' %} 
+{% if isLogin %}
+  {% block navbar %} {% include "user/userNavbar.html" %} {% endblock %}
+{% endif %}
+{% block container %}
 <div class="row">
   <div class="col-8 mx-auto row">
+  {% for flat in flats %}
     <div class="col-4 p-3">
       <div class="h1 border border-primary border-2 rounded text-center p-3">
-        <a href="{{curl}}rooms?flatId=1bhk" class="text-decoration-none"
-          >1 BHK</a
+        <a href="{{curl}}rooms?flatId={{flat.0}}" class="text-decoration-none"
+          >{{flat.1}}</a
         >
       </div>
     </div>
-    <div class="col-4 p-3">
-      <div class="h1 border border-primary border-2 rounded text-center p-3">
-        <a href="{{curl}}rooms?flatId=2bhk" class="text-decoration-none"
-          >2 BHK</a
-        >
-      </div>
-    </div>
-    <div class="col-4 p-3">
-      <div class="h1 border border-primary border-2 rounded text-center p-3">
-        <a href="{{curl}}rooms?flatId=3bhk" class="text-decoration-none"
-          >3 BHK</a
-        >
-      </div>
-    </div>
+  {% endfor %}
   </div>
 </div>
 {% endblock %}

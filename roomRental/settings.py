@@ -129,7 +129,7 @@ STATIC_URL = '/static/'
 
 CURRENT_URL='http://localhost:8000/'
 
-MEDIA_URL="media/"
+MEDIA_URL=CURRENT_URL+"media/"
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 EMAIL_USE_TLS = True

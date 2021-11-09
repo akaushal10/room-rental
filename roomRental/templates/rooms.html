@@ -1,4 +1,9 @@
-{% extends 'base.html' %} {% block container %}
+{% extends 'base.html' %}
+{% if isLogin %}
+  {% block navbar %} {% include "user/userNavbar.html" %} {% endblock %}
+{% endif %}
+
+{% block container %}
 <style>
   .room-img {
     max-height: 300px;
@@ -23,7 +28,7 @@
     </nav>
   </div>
   <div class="col-12 row">
-    {% for food in "abc" %}
+    {% for room in rooms %}
         <div class="
                 row
                 col-10
@@ -36,17 +41,17 @@
                 my-2
             ">
             <div class="col-4 px-0">
-                <img class="img-fluid w-100 room-img" src="https://apollo-singapore.akamaized.net/v1/files/ft63a2652p8a2-IN/image;s=272x0" />
+                <img class="img-fluid w-100 room-img" src="{{media_url}}room.3" />
             </div>
             <div class="col-8 p-3 d-flex flex-column justify-content-between">
                 <div>
-                    <div class="h4">43,Kandilpura</div>
-                    <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut, placeat. Enim asperiores earum dolorum quidem omnis accusantium accusamus veniam, dignissimos maiores illo repellendus in officiis sit voluptate veritatis molestias eaque!</div>
+                    <div class="h4">{{room.5}}</div>
+                    <div>{{room.2}}</div>
                 </div>
                 <div class="text-end d-flex  justify-content-between">
-                    <div><span class="align-middle ">&#8377; 405.43</span></div>
+                    <div><span class="align-middle ">&#8377; {{room.4}}</span></div>
                     <div>
-                        <button class="btn btn-success"> <span class="mx-2">Book</span
+                        <button class="btn btn-success" onclick="addRoom({{room.1}})"> <span class="mx-2">Book</span
                         ><i class="mx-2 fas fa-plus-circle"></i>
                     </button>
                     </div>

@@ -20,14 +20,21 @@
     >
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link active" aria-current="page" href="{{curl}}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Rooms</a>
+          <a class="nav-link" href="{{curl}}flatType/">Rooms</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Notifcations</a>
+          <a class="nav-link" href="{{curl}}about/">About</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{curl}}contact/">Contact</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{curl}}signup/">Signup</a>
+        </li>
+
         <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
@@ -40,8 +47,8 @@
             Login
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="login/ ">User</a></li>
-            <li><a class="dropdown-item" href="#">Admin</a></li>
+            <li><a class="dropdown-item" href="{{curl}}login/ ">User</a></li>
+            <li><a class="dropdown-item" href="{{curl}}adminLogin/">Admin</a></li>
           </ul>
         </li>
       </ul>

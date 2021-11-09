@@ -3,7 +3,6 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.http.response import JsonResponse
-
 import jwt
 curl=settings.CURRENT_URL
 media_url=settings.MEDIA_URL 
@@ -11,79 +10,119 @@ jwt_key = settings.JWT_SECURITY_KEY
 jwt_algo = 'HS256'
 from . import models
 import time
-
 def getTimeStamp():
     [t1,t2] = str(time.time()).split(".")
     return t1+t2
-
 def createJWTToken(data):
     return jwt.encode(data,jwt_key,jwt_algo)
 def decodeJWTToken(data):
-    return jwt.decode(token, jwt_key, algorithms=[jwt_algo])
-def home(request):
-    # if 'email' in request.COOKIES :
-    #     return redirect(curl+'myuser/')
-    # elif 'adminMail' in request.COOKIES:
-    #     return redirect(curl + 'myadmin/')
-    # elif 'dpId' in request.COOKIES:
-    #     return redirect(curl + 'dp/')
-    # else:
-    #     query = "select * from catagory"
-    #     models.cursor.execute(query)
-    #     clist = models.cursor.fetchall()
-    response=render(request, "base.html",{'curl': curl, 'media_url': media_url})
-    return response
+    return jwt.decode(data, jwt_key, algorithms=[jwt_algo])
+class Guest:
+    def __init__(self):
+        print("contructor")
+        self.isLogin = 4
+        self.token = False
+    def home(self,request):
+        if self.token:
+            return redirect(curl+'myuser/')
+        else:            
+            if 'token' in request.COOKIES:
+                token = request.COOKIES["token"]
+                data = decodeJWTToken(token)
+                query="select * from user where email='%s' and password='%s' "%(data["email"],data["password"])
+                models.cursor.execute(query)
+                user=models.cursor.fetchall()
+                if len(user)>0:
+                    self.user = user[0]
+                    response = redirect(curl+'myuser/')
+                else:
+                    response=render(request, "home.html",{'curl': curl, 'media_url': media_url,user:self.user})
+                return response
+            else:
+                response=render(request, "base.html",{'curl': curl, 'media_url': media_url})
+                return response
 
-def login(request):
-    if request.method=='GET':
-        response=render(request, "login.html",{'curl': curl, 'media_url': media_url})
-        return response
-    elif request.method=='POST':
-        email=request.POST.get('email')
-        password = request.POST.get('password')
-        query="select * from user where email='%s' and password='%s' "%(email,password)
-        models.cursor.execute(query)
-        user=models.cursor.fetchall()
-        print(user)
-        if len(user)>0:
-            response=JsonResponse({"data":user[0]})
-            new_token = createJWTToken({"email":email,"password":password})
-            response.set_cookie("token",new_token)
-            return response
+    def login(self,request):
+        if request.method=='GET':
+            if self.token:
+                return redirect(curl+"myuser/")
+            else:
+                if 'token' in request.COOKIES:
+                    return redirect(curl)
+                else:
+                    response=render(request, "login.html",{'curl': curl, 'media_url': media_url})
+                    return response
+        elif request.method=='POST':
+            email=request.POST.get('email')
+            password = request.POST.get('password')
+            query="select * from user where email='%s' and password='%s' "%(email,password)
+            models.cursor.execute(query)
+            user=models.cursor.fetchall()
+            print(user)
+            if len(user)>0:
+                response=JsonResponse({"data":user[0]})
+                new_token = createJWTToken({"email":email,"password":password})
+                response.set_cookie("token",new_token)
+                return response
+            else:
+                return JsonResponse({"error":"Invalid Credentials...."})
         else:
-            return JsonResponse({"error":"Invalid Credentials...."})
-    else:
-        return JsonResponse({"otp":1,'email':''})
+            return JsonResponse({"otp":1,'email':''})
 
-def signup(request):
-    if request.method=='GET':
-        response=render(request, "signup.html",{'curl': curl, 'media_url': media_url})
-        print(response)
+    def signup(self,request):
+        if request.method=='GET':
+            if self.token:
+                return redirect(curl+"myuser/")
+            else:
+                if 'token' in request.COOKIES:
+                    return redirect(curl)
+                else:
+                    response=render(request, "signup.html",{'curl': curl, 'media_url': media_url})
+                    return response
+        elif request.method=='POST':
+            name = request.POST.get('name')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            mobile = request.POST.get('mobile')
+            user_id = "user"+getTimeStamp()
+            query = "insert into user (name,user_id,email,mobile,password,status,createdAt) values('%s','%s','%s','%s','%s','%s','%s')" % (name,user_id,email,mobile,password,0,getTimeStamp())
+            models.cursor.execute(query)
+            models.db.commit()
+            # user=models.cursor.fetchall()
+            # if len(user)>0:
+            #     response=redirect(curl+"myuser/")
+            #     new_token = createJWTToken(email)
+            #     response.set_cookie("token",new_token)
+            #     return response
+            # else:
+            #     return redirect(curl)
+            return JsonResponse({"otp":1,'email':''})
+        else:
+            return JsonResponse({"otp":1,'email':''})
+        
+    def flatType(self,request):
+        if self.token:
+            response= redirect(curl+"myuser/flatType")
+        else:
+            if 'token' in request.COOKIES:
+                response= redirect(curl+"myuser/flatType")
+            else:
+                getFlatQuery = "select * from flat_types"
+                models.cursor.execute(getFlatQuery)
+                flats = models.cursor.fetchall()
+                response=render(request, "flatType.html",{'curl': curl, 'media_url': media_url,"flats":flats})
         return response
-    elif request.method=='POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        mobile = request.POST.get('mobile')
-        user_id = "user"+getTimeStamp()
-        query = "insert into user (name,user_id,email,mobile,password,status,createdAt) values('%s','%s','%s','%s','%s','%s','%s')" % (name,user_id,email,mobile,password,0,getTimeStamp())
-        models.cursor.execute(query)
-        models.db.commit()
-        # user=models.cursor.fetchall()
-        # if len(user)>0:
-        #     response=redirect(curl+"myuser/")
-        #     new_token = createJWTToken(email)
-        #     response.set_cookie("token",new_token)
-        #     return response
-        # else:
-        #     return redirect(curl)
-        return JsonResponse({"otp":1,'email':''})
-    else:
-        return JsonResponse({"otp":1,'email':''})
-    
-def flatType(request):
-    response=render(request, "flatType.html",{'curl': curl, 'media_url': media_url})
-    return response
-def rooms(request):
-    response=render(request, "rooms.html",{'curl': curl, 'media_url': media_url})
-    return response
+
+    def rooms(self,request):
+        flatId = request.GET.get('flatId')
+        if self.token:
+            response= redirect(curl+"myuser/flatType")
+        else:
+            if 'token' in request.COOKIES:
+                response= redirect(curl+"myuser/flatType")
+            else:
+                getRoomsQuery = "select * from room_types where flat_id='%s'"%(flatId)
+                models.cursor.execute(getRoomsQuery)
+                rooms = models.cursor.fetchall()
+                response=render(request, "rooms.html",{'curl': curl, 'media_url': media_url,"rooms":rooms})
+        return response

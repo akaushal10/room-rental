@@ -1,6 +1,10 @@
 from django.urls import path
 from django.contrib import admin
 from . import views
+user = views.User()
 urlpatterns=[
-    path('',views.userHome),
+    path('',user.userHome),
+    path('flatType/',user.flatType),
+    path('rooms/',user.rooms),
+    path('logout/',user.logout)
 ]
