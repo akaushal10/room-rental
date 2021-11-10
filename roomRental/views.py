@@ -22,6 +22,7 @@ class Guest:
         print("contructor")
         self.isLogin = 4
         self.token = False
+        self.adminToken = False
     def home(self,request):
         if self.token:
             return redirect(curl+'myuser/')
@@ -38,10 +39,46 @@ class Guest:
                 else:
                     response=render(request, "home.html",{'curl': curl, 'media_url': media_url,user:self.user})
                 return response
-            else:
-                response=render(request, "base.html",{'curl': curl, 'media_url': media_url})
+            elif 'adminToken' in request.COOKIES:
+                adminToken = request.COOKIES["adminToken"]
+                data = decodeJWTToken(adminToken)
+                query="select * from admins where admin_id='%s' and admin_password='%s' "%(data["email"],data["password"])
+                models.cursor.execute(query)
+                admin=models.cursor.fetchall()
+                if len(admin)>0:
+                    response = redirect(curl+'myadmin/')
+                else:
+                    response=render(request, "home.html",{'curl': curl, 'media_url': media_url,user:self.user})
                 return response
-
+            else:
+                response=render(request, "home.html",{'curl': curl, 'media_url': media_url})
+                return response
+    def adminLogin(self,request):
+        if request.method=='GET':
+            if self.adminToken:
+                return redirect(curl+"myadmin/")
+            else:
+                if 'adminToken' in request.COOKIES:
+                    return redirect(curl+"myadmin")
+                else:
+                    response=render(request, "adminLogin.html",{'curl': curl, 'media_url': media_url})
+                    return response
+        elif request.method=='POST':
+            email=request.POST.get('email')
+            password = request.POST.get('password')
+            query="select * from admins where admin_id='%s' and admin_password='%s' "%(email,password)
+            models.cursor.execute(query)
+            user=models.cursor.fetchall()
+            if len(user)>0:
+                response=JsonResponse({"data":user[0],"curl":curl})
+                new_token = createJWTToken({"email":email,"password":password})
+                response.set_cookie("adminToken",new_token)
+                return response
+            else:
+                return JsonResponse({"error":"Invalid Credentials...."})
+        else:
+            return JsonResponse({"otp":1,'email':''})
+        
     def login(self,request):
         if request.method=='GET':
             if self.token:
@@ -58,9 +95,8 @@ class Guest:
             query="select * from user where email='%s' and password='%s' "%(email,password)
             models.cursor.execute(query)
             user=models.cursor.fetchall()
-            print(user)
             if len(user)>0:
-                response=JsonResponse({"data":user[0]})
+                response=JsonResponse({"data":user[0],"curl":curl})
                 new_token = createJWTToken({"email":email,"password":password})
                 response.set_cookie("token",new_token)
                 return response
@@ -96,7 +132,7 @@ class Guest:
             #     return response
             # else:
             #     return redirect(curl)
-            return JsonResponse({"otp":1,'email':''})
+            return JsonResponse({"success":1,"message":"User Created Succesfull...!","curl":curl})
         else:
             return JsonResponse({"otp":1,'email':''})
         

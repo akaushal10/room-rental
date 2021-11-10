@@ -3,6 +3,7 @@ from django.conf import settings
 from django.http.response import JsonResponse
 from django.core.files.storage import FileSystemStorage
 from roomRental import models
+from datetime import datetime
 import time
 import jwt
 
@@ -66,14 +67,49 @@ class User:
         else:
             if 'token' in request.COOKIES:
                 self.token = request.COOKIES["token"]
-                response=render(request, "rooms.html",{'curl': curl, 'media_url': media_url,"isLogin":True,,"rooms":rooms})
+                response=render(request, "rooms.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"rooms":rooms})
             else:
                 response= redirect(curl+"flatType/")
         return response
+    def bookRoom(self,request):
+        if request.method=='GET':
+            room_id = request.GET.get('roomId') 
+            data = decodeJWTToken(request.COOKIES["token"])
+
+            getUserQuery="select user_id from user where email='%s' and password='%s' "%(data["email"],data["password"])
+            models.cursor.execute(getUserQuery)
+            userData=models.cursor.fetchall()[0]
+
+            getRoomQuery="select * from room_types where room_id='%s'"%(room_id)
+            models.cursor.execute(getRoomQuery)
+            roomData=models.cursor.fetchall()[0]
+            print("userData :",userData,"roomData : ",roomData)
+            if self.token:
+                response=render(request, "user/bookRoom.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"userData":userData,"roomData":roomData})
+            else:
+                if 'token' in request.COOKIES:
+                    self.token = request.COOKIES["token"]
+                    response=render(request, "user/bookRoom.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"userData":userData,"roomData":roomData})
+                else:
+                    response= redirect(curl+"login/")
+            return response
+        else:
+            order_id = "order"+getTimeStamp()
+            room_id = request.POST.get('room_id')
+            user_id = request.POST.get('user_id')
+            joining_date = request.POST.get('joining_date')            
+            booking_date = datetime.today().strftime('%d-%m-%Y')
+            leaving_date = "NY"
+            trxn_id = "dfnjskffdjmfdgjfd"
+            bookRoomQuery = "insert into history (order_id,room_id,user_id,joining_date,booking_date,leaving_date,trxn_id) values('%s','%s','%s','%s','%s','%s','%s')"%(order_id,room_id,user_id,joining_date,booking_date,leaving_date,trxn_id)
+            models.cursor.execute(bookRoomQuery)
+            models.db.commit()
+            return JsonResponse({"message":"Room book SuccessFully....!","curl":curl})
     def logout(self,request):
         if 'token' in request.COOKIES:
             response = redirect(curl)
             response.delete_cookie('token')
+            self.token = None
         else:
             response = redirect(curl)
         return response

@@ -51,9 +51,9 @@
                 <div class="text-end d-flex  justify-content-between">
                     <div><span class="align-middle ">&#8377; {{room.4}}</span></div>
                     <div>
-                        <button class="btn btn-success" onclick="addRoom({{room.1}})"> <span class="mx-2">Book</span
+                        <a href="{{curl}}myuser/bookRoom?roomId={{room.1}}" class="btn btn-success text-decoration-none"><span class="mx-2">Book</span
                         ><i class="mx-2 fas fa-plus-circle"></i>
-                    </button>
+                    </a>
                     </div>
                 </div>
             </div>
@@ -61,4 +61,39 @@
     {% endfor %}
   </div>
 </div>
+<script>
+  const bookRoom = (event) => {
+    event.preventDefault();
+    var formData = new FormData();
+    formData.append("email", $("#login-email").val());
+    formData.append("password", $("#login-password").val());
+    formData.append(
+      "csrfmiddlewaretoken",
+      $("input[name=csrfmiddlewaretoken]").val()
+    );
+
+    fetch("{{curl}}login/", {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        if(json.error){
+          $('#toast-body-error').html(json.error)
+          $('#error-toast').toast("show")
+        }else{
+          $('#toast-body-success').html(json.message)
+          $("#myToast").toast("show");
+          window.location = json.curl+"myuser/"
+        }
+      })
+      .catch((err) => {
+        $('#toast-body-error').html(err.message)
+        $('#error-toast').toast("show")
+      });
+  };
+  $("#login-form").submit(authUser);
+</script>
+
 {% endblock %}

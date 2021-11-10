@@ -23,6 +23,7 @@ guest = views.Guest()
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',guest.home),
+    path('adminLogin/',guest.adminLogin),
     path('login/',guest.login),
     path('signup/',guest.signup),
     path('flatType/',guest.flatType),

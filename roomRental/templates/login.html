@@ -1,40 +1,41 @@
-{% extends 'base.html' %}
-{% block container %}
+{% extends 'base.html' %} {% block container %}
 <div class="row p-5">
-    <form id="login-form" class="row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow" novalidate>
-        {% csrf_token %}
-        <div class="col-12 my-3">
-            <label for="login-email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="login-email" required />
-            <div class="invalid-feedback">
-              Please provide a valid email.
-            </div>
-            <div class="valid-feedback">
-                Looks good.
-            </div>
-        </div>
-        <div class="col-12 my-3">
-            <label for="login-password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="login-password" required />
-            <div class="invalid-feedback">
-              Please provide a valid password.
-            </div>
-            <div class="valid-feedback">
-                Looks good.
-            </div>
-        </div>
-        <div class="col-12 my-3 text-center">
-            <button class="mx-auto btn btn-success" >Login</button>
-        </div>
-    </form>
+  <form
+    id="login-form"
+    class="row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
+    novalidate
+  >
+    {% csrf_token %}
+    <div class="col-12 my-3">
+      <label for="login-email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="login-email" required />
+      <div class="invalid-feedback">Please provide a valid email.</div>
+      <div class="valid-feedback">Looks good.</div>
+    </div>
+    <div class="col-12 my-3">
+      <label for="login-password" class="form-label">Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="login-password"
+        required
+      />
+      <div class="invalid-feedback">Please provide a valid password.</div>
+      <div class="valid-feedback">Looks good.</div>
+    </div>
+    <div class="col-12 my-3 text-center">
+      <button class="mx-auto btn btn-success">Login</button>
+    </div>
+  </form>
+
 </div>
 <script>
-    const authUser = (event)=>{
+  const authUser = (event) => {
     event.preventDefault();
     var formData = new FormData();
     formData.append("email", $("#login-email").val());
     formData.append("password", $("#login-password").val());
-        formData.append(
+    formData.append(
       "csrfmiddlewaretoken",
       $("input[name=csrfmiddlewaretoken]").val()
     );
@@ -45,12 +46,21 @@
       credentials: "same-origin",
     })
       .then((response) => response.json())
-      .then((json) => console.log(json))
+      .then((json) => {
+        if(json.error){
+          $('#toast-body-error').html(json.error)
+          $('#error-toast').toast("show")
+        }else{
+          $('#toast-body-success').html(json.message)
+          $("#myToast").toast("show");
+          window.location = json.curl+"myuser/"
+        }
+      })
       .catch((err) => {
-        console.log(err);
+        $('#toast-body-error').html(err.message)
+        $('#error-toast').toast("show")
       });
-
-    }
-    $('#login-form').submit(authUser)
+  };
+  $("#login-form").submit(authUser);
 </script>
 {% endblock %}

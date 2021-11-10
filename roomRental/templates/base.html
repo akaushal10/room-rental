@@ -20,8 +20,25 @@
     <title>Room Rental</title>
   </head>
   <body class="container-fluid">
-    {% block navbar %} {% include "navbar.html" %} {% endblock %}
-     {% block container %} {% endblock %}
+    {% block navbar %} {% include "navbar.html" %} {% endblock %} 
+    {% block container %} {% endblock %}
+    <div
+      class="toast position-absolute top-0 end-0"
+      id="success-toast"
+      data-bs-delay="1000"
+      data-bs-autohide="true"
+    >
+      <div class="toast-body bg-success" id="toast-body-success"></div>
+    </div>
+    <div
+      class="toast position-absolute top-0 end-0"
+      id="error-toast"
+      data-bs-delay="1000"
+      data-bs-autohide="true"
+    >
+      <div class="toast-body bg-danger" id="toast-body-error"></div>
+    </div>
+
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->

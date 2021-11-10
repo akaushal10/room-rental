@@ -1,0 +1,71 @@
+{% extends 'user/userHome.html' %} {% block container %}
+<div class="row p-5">
+  <form
+    id="bookRoom-form"
+    class="row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
+    novalidate
+  >
+    {% csrf_token %}
+    <div>{{roomData.5}}</div>
+    <div>{{roomData.2}}</div>
+    <input type="hidden" value="{{userData.0}}" id="userId" name="user_id" />
+    <input type="hidden" value="{{roomData.1}}" id="roomId" name="room_id" />
+    <div class="col-12 my-3">
+      <label for="joining-date" class="form-label">Joining Date</label>
+      <input
+        type="date"
+        class="form-control"
+        id="joining-date"
+        name="joining_date"
+        min="2018-01-01"
+        required
+      />
+      <div class="invalid-feedback">Please provide a valid joining date.</div>
+      <div class="valid-feedback">Looks good.</div>
+    </div>
+    <div class="col-12 my-3 text-center d-flex justify-content-between">
+      <div class="text-start">&#8377; {{roomData.4}}</div>
+      <div class="text-end">
+        <button type="submit" class="mx-auto btn btn-success">Book Room</button>
+      </div>
+    </div>
+  </form>
+</div>
+<script>
+  const bookRoom = (event) => {
+    event.preventDefault();
+    var formData = new FormData();
+    formData.append("room_id", $("#roomId").val());
+    formData.append("user_id", $("#userId").val());
+    formData.append("joining_date", $("#joining-date").val());
+    console.log($("#joining-date").val())
+    formData.append(
+      "csrfmiddlewaretoken",
+      $("input[name=csrfmiddlewaretoken]").val()
+    );
+
+    fetch("{{curl}}myuser/bookRoom/", {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        if(json.error){
+          $('#toast-body-error').html(json.error)
+          $('#error-toast').toast("show")
+        }else{
+          $('#toast-body-success').html(json.message)
+          $("#myToast").toast("show");
+//          window.location = json.curl+"myuser/"
+        }
+      })
+      .catch((err) => {
+        $('#toast-body-error').html(err.message)
+        $('#error-toast').toast("show")
+      });
+  };
+  $("#bookRoom-form").submit(bookRoom);
+</script>
+
+{% endblock %}
