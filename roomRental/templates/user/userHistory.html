@@ -1,0 +1,29 @@
+{% extends 'user/userHome.html' %} {% block container %}
+<div class="row">
+  {% for room in history %}
+  <div class="bookedRoom col-6 row rounded p-3 my-3">
+    <div class="row col-12 border">
+      <img src="{{curl}}media/{{room.5}}" class="img-fluid col-5" />
+      <div class="col-7 p-3 d-flex flex-column justify-content-between">
+        <div>
+          <div class="h4">{{room.3}}</div>
+          <div class="d-flex justify-content-start">
+            <div>Joined on :</div>
+            <div>{{room.0}}</div>
+          </div>
+          <div class="d-flex justify-content-start">
+            <div>Leave on :</div>
+            {% if room.1 == "NY" %}
+            <div>Not Yet</div>
+            {% else %}
+            <div>{{room.1}}</div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="text-end h5">&#8377; {{room.4}} /month</div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -19,10 +19,23 @@ def createJWTToken(data):
     return jwt.encode(data,jwt_key,jwt_algo)
 def decodeJWTToken(data):
     return jwt.decode(data, jwt_key, algorithms=[jwt_algo])
+from datetime import datetime, timedelta
+
+
+def inc_date(origin_date):
+    day = origin_date.day
+    month = origin_date.month
+    year = origin_date.year
+    if origin_date.month == 12:
+        delta = datetime(year + 1, 1, day) - origin_date
+    else:
+        delta = datetime(year, month + 1, day) - origin_date
+    return origin_date + delta
 
 class User:
     def __init__(self):
         self.token = False
+        self.user = []
     def userHome(self,request):
         if self.token:
             response=render(request, "userHome.html",{'curl': curl, 'media_url': media_url,"user":self.user,"isLogin":True})
@@ -71,6 +84,25 @@ class User:
             else:
                 response= redirect(curl+"flatType/")
         return response
+    def history(self,request):
+        data = decodeJWTToken(request.COOKIES["token"])
+        getUserQuery="select user_id from user where email='%s' and password='%s' "%(data["email"],data["password"])
+        models.cursor.execute(getUserQuery)
+        userData=models.cursor.fetchall()[0]
+
+        getHistoryQuery = "select history.joining_date,history.leaving_date,history.booking_date,room_types.room_add,room_types.room_price,room_types.room_img from history inner join room_types on room_types.room_id=history.room_id where history.user_id='%s'"%(userData[0]) 
+        models.cursor.execute(getHistoryQuery)
+        rooms = models.cursor.fetchall()
+        if self.token:
+            response=render(request, "user/userHistory.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"history":rooms})
+        else:
+            if 'token' in request.COOKIES:
+                self.token = request.COOKIES["token"]
+                response=render(request, "user/userHistory.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"history":rooms})
+            else:
+                response= redirect(curl+"flatType/")
+        return response
+
     def bookRoom(self,request):
         if request.method=='GET':
             room_id = request.GET.get('roomId') 
@@ -97,9 +129,15 @@ class User:
             order_id = "order"+getTimeStamp()
             room_id = request.POST.get('room_id')
             user_id = request.POST.get('user_id')
-            joining_date = request.POST.get('joining_date')            
+            joining_date = request.POST.get('joining_date')       
+            total_months = int(request.POST.get('total_months'))
+            temp_date = datetime.strptime(joining_date, "%Y-%m-%d")
+            joining_date = temp_date.strftime('%d-%m-%Y')
+            leaving_date = temp_date
+            for i in range(total_months):
+                leaving_date = inc_date(leaving_date)
+            leaving_date = leaving_date.strftime('%d-%m-%Y')
             booking_date = datetime.today().strftime('%d-%m-%Y')
-            leaving_date = "NY"
             trxn_id = "dfnjskffdjmfdgjfd"
             bookRoomQuery = "insert into history (order_id,room_id,user_id,joining_date,booking_date,leaving_date,trxn_id) values('%s','%s','%s','%s','%s','%s','%s')"%(order_id,room_id,user_id,joining_date,booking_date,leaving_date,trxn_id)
             models.cursor.execute(bookRoomQuery)

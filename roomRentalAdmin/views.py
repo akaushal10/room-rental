@@ -45,7 +45,7 @@ class RoomRentalAdmin:
                 response=redirect(curl)
                 return response
 
-    def flat(request):
+    def flat(self,request):
         if request.method=='GET':
             response=render(request, "admin/addFlat.html",{'curl': curl, 'media_url': media_url})
             return response
@@ -60,7 +60,7 @@ class RoomRentalAdmin:
                 return JsonResponse({"output":1})
             except:
                 return JsonResponse({"output":0})
-    def room(request):
+    def room(self,request):
         flat_query = "select * from flat_types"
         models.cursor.execute(flat_query)
         flatList = models.cursor.fetchall()
@@ -83,6 +83,19 @@ class RoomRentalAdmin:
             return JsonResponse({"output":0})
         else:
             return JsonResponse({"output":0})
+    def history(self,request):
+        getHistory = "select * from history"
+        models.cursor.execute(getHistory)
+        rooms = models.cursor.fetchall()
+        if self.adminToken:
+            response=render(request, "admin/history.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"history":rooms})
+        else:
+            if 'adminToken' in request.COOKIES:
+                self.adminToken = request.COOKIES["adminToken"]
+                response=render(request, "admin/history.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"history":rooms})
+            else:
+                response= redirect(curl)
+        return response
     def logout(self,request):
         if 'adminToken' in request.COOKIES:
             response = redirect(curl)

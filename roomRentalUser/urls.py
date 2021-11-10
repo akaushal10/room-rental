@@ -7,5 +7,6 @@ urlpatterns=[
     path('flatType/',user.flatType),
     path('rooms/',user.rooms),
     path('bookRoom/',user.bookRoom),
+    path('history/',user.history),
     path('logout/',user.logout)
 ]
