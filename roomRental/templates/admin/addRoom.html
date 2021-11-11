@@ -1,9 +1,9 @@
 {% extends 'admin/adminHome.html' %} {% block container %}
-<div class="row p-5">
+<div class="row p-5 mx-0">
   <form
-    id="add-flat"
+    id="add-room"
     enctype="multipart/form-data"
-    class="row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
+    class="form-light row col-11 col-md-6 col-lg-4 mx-auto rounded p-3"
     novalidate
   >
     {%csrf_token %}
@@ -81,6 +81,9 @@
   </form>
 </div>
 <script>
+  $(document).ready(()=>{
+    $('#room-nav').addClass('activeNav')    
+  })
   var file;
   $('input[type="file"]').change(function (e) {
     file = e.target.files[0];
@@ -103,11 +106,21 @@
       credentials: "same-origin",
     })
       .then((response) => response.json())
-      .then((json) => console.log(json))
+      .then((data) => {
+                if(data.error){ 
+          $('#toast-body-error').html(data.error)
+          $('#error-toast').toast("show")
+        }else{
+          $('#toast-body-success').html(data.message)
+          $("#myToast").toast("show");
+          $('#add-room').trigger("reset");
+        }
+
+      })
       .catch((err) => {
         console.log(err);
       });
   };
-  $("#add-flat").submit(addFlat);
+  $("#add-room").submit(addFlat);
 </script>
 {% endblock %}

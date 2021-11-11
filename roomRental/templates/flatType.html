@@ -1,13 +1,17 @@
 {% extends 'base.html' %} 
+{% block navbar %}
 {% if isLogin %}
-  {% block navbar %} {% include "user/userNavbar.html" %} {% endblock %}
+   {% include "user/userNavbar.html" %} 
+{% else %}
+  {% include "navbar.html" %} 
 {% endif %}
+{% endblock %}
 {% block container %}
 <div class="row">
   <div class="col-8 mx-auto row">
   {% for flat in flats %}
     <div class="col-4 p-3">
-      <div class="h1 border border-primary border-2 rounded text-center p-3">
+      <div class="h1 border flat-div border-primary border-2 rounded text-center p-3">
       {% if isLogin %}
 
         <a href="{{curl}}myuser/rooms?flatId={{flat.0}}" class="text-decoration-none"
@@ -25,4 +29,9 @@
   {% endfor %}
   </div>
 </div>
+<script>
+  $(document).ready(()=>{
+    $('#room-nav').addClass('activeNav')    
+  })
+</script>
 {% endblock %}

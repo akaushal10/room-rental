@@ -1,0 +1,45 @@
+
+body{
+    background-color: var(--primaryColor);
+}
+.form-light{
+    background-color: var(--primaryLightColor) ;
+    box-shadow: 0 1px 5px var(--secondaryLight) !important;
+}
+input,select,textarea{
+    border:1px solid var(--primaryDark) !important;
+}
+.flat-div,.room-div{
+    background-color: var(--primaryLightColor);
+}
+.breadcrumb-item::before {
+    color: var(--primaryDark) !important;
+}
+.no-data{
+    color:var(--secondaryLight);
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+}
+.bookedRoom{
+    background-color: var(--primaryLightColor);
+    box-shadow: 0 1px 5px var(--secondaryLight) !important;
+
+}
+.nav-link{
+    font-weight: 600;
+}
+.activeNav{
+    background-color: var(--primaryLightColor);
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.activeNav a{
+    color: var(--primaryDark) !important;
+}
+.history-table{
+    background-color: var(--primaryLightColor);
+    border-radius: 10px !important;
+    border: 3px solid var(--primaryDark);
+}

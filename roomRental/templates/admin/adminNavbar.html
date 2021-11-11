@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#"
+    <a class="navbar-brand" href="{{curl}}"
       ><i class="fas fa-users-cog mx-2"></i
       ><span class="mx-2">Admin Portal</span></a
     >
@@ -20,10 +20,10 @@
       id="adminNavbar"
     >
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        <li id="home-nav" class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{{curl}}">Home</a>
         </li>
-        <li class="nav-item dropdown">
+        <li id="flat-nav" class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
             href="#"
@@ -35,12 +35,12 @@
             Flats
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownFlats">
-            <li><a class="dropdown-item" href="addFlat/">Add Flats</a></li>
-            <li><a class="dropdown-item" href="manageFlats/">Manage Flats</a></li>
+            <li><a class="dropdown-item" href="{{curl}}myadmin/addFlat/">Add Flats</a></li>
+            <li><a class="dropdown-item" href="{{curl}}myadmin/manageFlats/">Manage Flats</a></li>
           </ul>
         </li>
 
-        <li class="nav-item dropdown">
+        <li id="room-nav" class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
             href="#"
@@ -52,11 +52,11 @@
             Room
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownRoom">
-            <li><a class="dropdown-item" href="addRoom/">Add Room</a></li>
-            <li><a class="dropdown-item" href="manageRoom/">Manage Room</a></li>
+            <li><a class="dropdown-item" href="{{curl}}myadmin/addRoom/">Add Room</a></li>
+            <li><a class="dropdown-item" href="{{curl}}myadmin/manageRoom/">Manage Room</a></li>
           </ul>
         </li>
-        <li class="nav-item dropdown">
+        <li id="user-nav" class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
             href="#"
@@ -68,14 +68,14 @@
             User
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownUser">
-            <li><a class="dropdown-item" href="addUser/">Add User</a></li>
-            <li><a class="dropdown-item" href="manageUser/">Manage User</a></li>
+            <li><a class="dropdown-item" href="{{curl}}myadmin/addUser/">Add User</a></li>
+            <li><a class="dropdown-item" href="{{curl}}myadmin/manageUser/">Manage User</a></li>
           </ul>
         </li>
-        <li class="nav-item">
+        <li id="history-nav" class="nav-item">
           <a class="nav-link" aria-current="page" href="{{curl}}myadmin/history/">History</a>
         </li>
-        <li class="nav-item dropdown">
+        <li  id="setting-nav" class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
             href="#"

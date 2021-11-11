@@ -50,6 +50,10 @@
   </form>
 </div>
 <script>
+  $(document).ready(()=>{
+    $('#room-nav').addClass('activeNav')    
+  })
+
   const bookRoom = (event) => {
     event.preventDefault();
     var formData = new FormData();

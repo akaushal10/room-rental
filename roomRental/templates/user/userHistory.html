@@ -1,8 +1,9 @@
 {% extends 'user/userHome.html' %} {% block container %}
-<div class="row">
+<div class="w-100 ps-5">
+<div class="row ">
   {% for room in history %}
-  <div class="bookedRoom col-6 row rounded p-3 my-3">
-    <div class="row col-12 border">
+  <div class=" col-6 row p-5 my-3">
+    <div class="row col-12 border rounded bookedRoom">
       <img src="{{curl}}media/{{room.5}}" class="img-fluid col-5" />
       <div class="col-7 p-3 d-flex flex-column justify-content-between">
         <div>
@@ -26,4 +27,11 @@
   </div>
   {% endfor %}
 </div>
+</div>
+<script>
+  $(document).ready(()=>{
+    $('#history-nav').addClass('activeNav')    
+  })
+</script>
+
 {% endblock %}

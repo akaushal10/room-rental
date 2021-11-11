@@ -2,10 +2,11 @@
 <div class="row p-5">
   <form
     id="login-form"
-    class="row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
+    class="row form-light col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 "
     novalidate
   >
     {% csrf_token %}
+    <div class="col-12 my-3 h4 text-center">Login</div>
     <div class="col-12 my-3">
       <label for="login-email" class="form-label">Email</label>
       <input type="email" class="form-control" id="login-email" required />
@@ -30,6 +31,10 @@
 
 </div>
 <script>
+  $(document).ready(()=>{
+    $('#login-nav').addClass('activeNav')    
+  })
+
   const authUser = (event) => {
     event.preventDefault();
     var formData = new FormData();

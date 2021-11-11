@@ -38,7 +38,7 @@ class User:
         self.user = []
     def userHome(self,request):
         if self.token:
-            response=render(request, "userHome.html",{'curl': curl, 'media_url': media_url,"user":self.user,"isLogin":True})
+            response=render(request, "user/userHome.html",{'curl': curl, 'media_url': media_url,"user":self.user,"isLogin":True})
             return response
         else:
             if 'token' in request.COOKIES:

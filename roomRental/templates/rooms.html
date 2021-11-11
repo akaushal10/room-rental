@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
+{% block navbar %}
 {% if isLogin %}
-  {% block navbar %} {% include "user/userNavbar.html" %} {% endblock %}
+   {% include "user/userNavbar.html" %} 
+{% else %}
+  {% include "navbar.html" %} 
 {% endif %}
+{% endblock %}
+
 
 {% block container %}
 <style>
@@ -17,19 +22,21 @@
     <nav
       style="--bs-breadcrumb-divider: '>'"
       aria-label="breadcrumb"
-      class="col-10 mx-auto h5"
+      class="col-10 mx-auto h5 text-dark"
     >
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
-          <a href="{{curl}}flatType/">Flat Type</a>
+          <a href="{{curl}}flatType/" class="text-decoration-none text-dark">Flat Type</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">1 BHK</li>
+        <li class="breadcrumb-item active text-dark" aria-current="page">1 BHK</li>
       </ol>
     </nav>
   </div>
   <div class="col-12 row">
-    {% for room in rooms %}
+  {% if rooms %}
+      {% for room in rooms %}
         <div class="
+        room-div
                 row
                 col-10
                 border
@@ -59,9 +66,17 @@
             </div>
             </div>
     {% endfor %}
+  {% else %}
+  <div class="no-data"> No room found</div>
+  {% endif %}
+
   </div>
 </div>
 <script>
+  $(document).ready(()=>{
+    $('#room-nav').addClass('activeNav')    
+  })
+
   const bookRoom = (event) => {
     event.preventDefault();
     var formData = new FormData();

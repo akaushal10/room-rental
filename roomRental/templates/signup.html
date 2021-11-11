@@ -2,10 +2,11 @@
 <div class="row p-5">
   <form
     id="signup-form"
-    class="row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
+    class=" form-light row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
     novalidate
   >
     {% csrf_token %}
+      <div class="col-12 my-3 h4 text-center">User Signup</div>
     <div class="col-12 my-2">
       <label for="signup-name" class="form-label">Username</label>
       <input
@@ -73,6 +74,9 @@
   </form>
 </div>
 <script>
+  $(document).ready(()=>{
+    $('#signup-nav').addClass('activeNav')    
+  })
   const authUser = (event) => {
     event.preventDefault();
     var formData = new FormData();

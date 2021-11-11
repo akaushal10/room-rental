@@ -1,10 +1,11 @@
 {% extends 'admin/adminHome.html' %} {% block container %}
-<div class="row p-5">
-<div>{{curl}}myadmin/addFlat/</div>
+<div class="w-100">
+
+<div class="row p-5 mx-0">
   <form
     id="add-flat"
     enctype="multipart/form-data"
-    class="row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
+    class="form-light row col-11 col-md-6 col-lg-4 mx-auto rounded p-3"
     novalidate
   >
     {%csrf_token %}
@@ -26,7 +27,11 @@
     </div>
   </form>
 </div>
+</div>
 <script>
+  $(document).ready(()=>{
+    $('#flat-nav').addClass('activeNav')    
+  })
   const addFlat = (event) => {
     event.preventDefault();
     var formData = new FormData();
@@ -38,7 +43,16 @@
       credentials: 'same-origin',
     })
       .then((response) => response.json())
-      .then((json) => console.log(json))
+      .then((data) => {
+        if(data.error){ 
+          $('#toast-body-error').html(data.error)
+          $('#error-toast').toast("show")
+        }else{
+          $('#toast-body-success').html(data.message)
+          $("#myToast").toast("show");
+          $('#add-flat').trigger("reset");
+        }
+      })
       .catch((err) => {
         console.log(err);
       });

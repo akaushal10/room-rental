@@ -57,9 +57,9 @@ class RoomRentalAdmin:
                 val= (flat_id,flat_name)
                 models.cursor.execute(query,val)
                 models.db.commit()
-                return JsonResponse({"output":1})
+                return JsonResponse({"message":"Falt added succesfully...!"})
             except:
-                return JsonResponse({"output":0})
+                return JsonResponse({"error":"Something went wrong...!"})
     def room(self,request):
         flat_query = "select * from flat_types"
         models.cursor.execute(flat_query)
@@ -67,18 +67,22 @@ class RoomRentalAdmin:
         if request.method=='GET':
             return render(request,"admin/addRoom.html",{'curl':curl,'flatList':flatList})
         elif request.method=='POST':
-            flat_id=request.POST.get('flat_id')
-            room_desc=request.POST.get('room_desc')
-            room_add=request.POST.get('room_add')
-            room_price=request.POST.get('room_price')
-            room_img=request.FILES['room_img']
-            room_id = "room"+getTimeStamp()
-            fs=FileSystemStorage()
-            filename=fs.save(room_img.name,room_img)
-            query = "insert into room_types (flat_id,room_id,room_desc,room_img,room_price,room_add) values('%s','%s','%s','%s',%d,'%s')"%(flat_id,room_id,room_desc,filename,int(room_price),room_add)
-            models.cursor.execute(query)
-            models.db.commit()
-            return JsonResponse({"output":1})
+            try:
+                flat_id=request.POST.get('flat_id')
+                room_desc=request.POST.get('room_desc')
+                room_add=request.POST.get('room_add')
+                room_price=request.POST.get('room_price')
+                room_img=request.FILES['room_img']
+                room_id = "room"+getTimeStamp()
+                fs=FileSystemStorage()
+                filename=fs.save(room_img.name,room_img)
+                query = "insert into room_types (flat_id,room_id,room_desc,room_img,room_price,room_add) values('%s','%s','%s','%s',%d,'%s')"%(flat_id,room_id,room_desc,filename,int(room_price),room_add)
+                models.cursor.execute(query)
+                models.db.commit()
+                return JsonResponse({"message":"Room added succesfully...!"})
+            except:
+                return JsonResponse({"error":"Something went wrong...!"})
+
         elif request.method=='DELETE':
             return JsonResponse({"output":0})
         else:

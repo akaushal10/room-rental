@@ -2,7 +2,7 @@
 <div class="row p-5">
   <form
     id="login-form"
-    class="row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
+    class="form-light row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3"
     novalidate
   >
     {% csrf_token %}
@@ -25,11 +25,15 @@
       <div class="valid-feedback">Looks good.</div>
     </div>
     <div class="col-12 my-3 text-center">
-      <button class="mx-auto btn btn-success">Login</button>
+      <button class="mx-auto btn btn-success"> Admin Login</button>
     </div>
   </form>
 </div>
 <script>
+  $(document).ready(()=>{
+    $('#login-nav').addClass('activeNav')    
+  })
+
   const authUser = (event) => {
     event.preventDefault();
     var formData = new FormData();
