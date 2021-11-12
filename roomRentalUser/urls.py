@@ -8,5 +8,6 @@ urlpatterns=[
     path('rooms/',user.rooms),
     path('bookRoom/',user.bookRoom),
     path('history/',user.history),
-    path('logout/',user.logout)
+    path('logout/',user.logout),
+    path('checkout/',user.checkout)
 ]

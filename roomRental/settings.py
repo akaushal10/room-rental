@@ -141,3 +141,6 @@ EMAIL_HOST_PASSWORD = '' #Enter your email password
 JWT_SECURITY_KEY = "roomRentalSystem"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MERCHANT_KEY = "" #Enter your paytm merchant key
+MID = "" #Enter your MID

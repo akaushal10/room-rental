@@ -81,7 +81,7 @@
         }else{
           $('#toast-body-success').html(json.message)
           $("#myToast").toast("show");
-          window.location = json.curl+"myuser/history"
+          window.location.replace("{{curl}}"+"myuser/checkout/")
         }
       })
       .catch((err) => {

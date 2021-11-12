@@ -4,6 +4,8 @@ from django.http.response import JsonResponse
 from django.core.files.storage import FileSystemStorage
 from roomRental import models
 from datetime import datetime
+from django.views.decorators.csrf import csrf_exempt
+from . import paytm_checksum as paytm
 import time
 import jwt
 
@@ -11,6 +13,8 @@ curl=settings.CURRENT_URL
 media_url=settings.MEDIA_URL 
 jwt_key = settings.JWT_SECURITY_KEY
 jwt_algo = 'HS256'
+MERCHANT_KEY=settings.MERCHANT_KEY
+MID=settings.MID
 def getTimeStamp():
     [t1,t2] = str(time.time()).split(".")
     return t1+t2
@@ -37,8 +41,11 @@ class User:
         self.token = False
         self.user = []
     def userHome(self,request):
+        roomQuery = "select * from room_types limit 3"
+        models.cursor.execute(roomQuery)
+        roomsList = models.cursor.fetchall()
         if self.token:
-            response=render(request, "user/userHome.html",{'curl': curl, 'media_url': media_url,"user":self.user,"isLogin":True})
+            response=render(request, "user/userHome.html",{'curl': curl, 'media_url': media_url,"user":self.user,"isLogin":True,'rooms':roomsList})
             return response
         else:
             if 'token' in request.COOKIES:
@@ -49,7 +56,7 @@ class User:
                 user=models.cursor.fetchall()
                 if len(user)>0:
                     self.user = user[0]
-                    response=render(request, "user/userHome.html",{'curl': curl, 'media_url': media_url,"user":self.user,"isLogin":True})
+                    response=render(request, "user/userHome.html",{'curl': curl, 'media_url': media_url,"user":self.user,"isLogin":True,'rooms':roomsList})
                 else:
                     response= redirect(curl)
                 return response
@@ -132,6 +139,7 @@ class User:
             joining_date = request.POST.get('joining_date')       
             total_months = int(request.POST.get('total_months'))
             temp_date = datetime.strptime(joining_date, "%Y-%m-%d")
+            price = 10
             joining_date = temp_date.strftime('%d-%m-%Y')
             leaving_date = temp_date
             for i in range(total_months):
@@ -142,7 +150,33 @@ class User:
             bookRoomQuery = "insert into history (order_id,room_id,user_id,joining_date,booking_date,leaving_date,trxn_id) values('%s','%s','%s','%s','%s','%s','%s')"%(order_id,room_id,user_id,joining_date,booking_date,leaving_date,trxn_id)
             models.cursor.execute(bookRoomQuery)
             models.db.commit()
+            self.param_dict={
+                'MID':MID,
+                'ORDER_ID':order_id,
+                'TXN_AMOUNT':str(price*total_months),
+                'CUST_ID':user_id,
+                'INDUSTRY_TYPE_ID':'Retail',
+                'WEBSITE':'WEBSTAGING',
+                'CHANNEL_ID':'WEB',
+                'CALLBACK_URL':curl+'myuser/checkout/',
+            }
+            self.param_dict['CHECKSUMHASH']=paytm.generate_checksum(self.param_dict,MERCHANT_KEY)
             return JsonResponse({"message":"Room book SuccessFully....!","curl":curl})
+    @csrf_exempt
+    def checkout(self,request):
+        if request.method=="GET":
+            return render(request,"paytm.html",{"param_dict":self.param_dict})
+        else:
+            form=request.POST
+            response_dict=dict()
+            for i in form.keys():
+                response_dict[i]=form[i]
+                if i == 'CHECKSUMHASH' :
+                    checksum=form[i]
+            verify=paytm.verify_checksum(response_dict,MERCHANT_KEY,checksum)
+            print("verify : ",verify)
+        return redirect(curl+'myuser/history')
+
     def logout(self,request):
         if 'token' in request.COOKIES:
             response = redirect(curl)
