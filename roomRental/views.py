@@ -26,7 +26,10 @@ class Guest:
     def home(self,request):
         if self.token:
             return redirect(curl+'myuser/')
-        else:            
+        else:
+            roomQuery = "select * from room_types limit 3"
+            models.cursor.execute(roomQuery)
+            roomsList = models.cursor.fetchall()
             if 'token' in request.COOKIES:
                 token = request.COOKIES["token"]
                 data = decodeJWTToken(token)
@@ -37,7 +40,7 @@ class Guest:
                     self.user = user[0]
                     response = redirect(curl+'myuser/')
                 else:
-                    response=render(request, "home.html",{'curl': curl, 'media_url': media_url,user:self.user})
+                    response=render(request, "home.html",{'curl': curl, 'media_url': media_url,"rooms":roomsList})
                 return response
             elif 'adminToken' in request.COOKIES:
                 adminToken = request.COOKIES["adminToken"]
@@ -48,10 +51,10 @@ class Guest:
                 if len(admin)>0:
                     response = redirect(curl+'myadmin/')
                 else:
-                    response=render(request, "home.html",{'curl': curl, 'media_url': media_url,user:self.user})
+                    response=render(request, "home.html",{'curl': curl, 'media_url': media_url,"rooms":roomsList})
                 return response
             else:
-                response=render(request, "home.html",{'curl': curl, 'media_url': media_url})
+                response=render(request, "home.html",{'curl': curl, 'media_url': media_url,"rooms":roomsList})
                 return response
     def adminLogin(self,request):
         if request.method=='GET':

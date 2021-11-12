@@ -1,50 +1,95 @@
--- MySQL dump 10.13  Distrib 8.0.27, for Linux (x86_64)
+-- phpMyAdmin SQL Dump
+-- version 4.9.5deb2
+-- https://www.phpmyadmin.net/
 --
--- Host: localhost    Database: room_rental
--- ------------------------------------------------------
--- Server version	8.0.27-0ubuntu0.20.04.1
+-- Host: localhost:3306
+-- Generation Time: Nov 12, 2021 at 10:17 AM
+-- Server version: 8.0.27-0ubuntu0.20.04.1
+-- PHP Version: 7.4.3
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `room_rental`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admins`
+--
+
+CREATE TABLE `admins` (
+  `admin_id` varchar(20) DEFAULT NULL,
+  `admin_password` varchar(30) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `admins`
+--
+
+INSERT INTO `admins` (`admin_id`, `admin_password`) VALUES
+('admin@gmail.com', 'admin@123');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `flat_types`
 --
 
-DROP TABLE IF EXISTS `flat_types`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `flat_types` (
   `flat_id` varchar(25) DEFAULT NULL,
   `flat_name` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `flat_types`
 --
 
-LOCK TABLES `flat_types` WRITE;
-/*!40000 ALTER TABLE `flat_types` DISABLE KEYS */;
-INSERT INTO `flat_types` VALUES ('flat1636261637218448','1 BHK'),('flat16362616419350414','2 BHK'),('flat1636261646000407','3 BHK');
-/*!40000 ALTER TABLE `flat_types` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `flat_types` (`flat_id`, `flat_name`) VALUES
+('flat1636261637218448', '1 BHK'),
+('flat16362616419350414', '2 BHK'),
+('flat1636261646000407', '3 BHK');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `history`
+--
+
+CREATE TABLE `history` (
+  `order_id` varchar(30) NOT NULL,
+  `room_id` varchar(30) DEFAULT NULL,
+  `user_id` varchar(30) DEFAULT NULL,
+  `joining_date` varchar(20) DEFAULT NULL,
+  `booking_date` varchar(20) DEFAULT NULL,
+  `leaving_date` varchar(20) DEFAULT NULL,
+  `trxn_id` varchar(30) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `history`
+--
+
+INSERT INTO `history` (`order_id`, `room_id`, `user_id`, `joining_date`, `booking_date`, `leaving_date`, `trxn_id`) VALUES
+('order16365593716164472', 'room16363025225972493', 'user16363040256597939', '18-11-2021', '10-11-2021', '18-06-2022', 'dfnjskffdjmfdgjfd'),
+('order16365596831568065', 'room16363025225972493', 'user16363040256597939', '24-11-2021', '10-11-2021', '24-06-2022', 'dfnjskffdjmfdgjfd');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `room_types`
 --
 
-DROP TABLE IF EXISTS `room_types`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `room_types` (
   `flat_id` varchar(25) DEFAULT NULL,
   `room_id` varchar(25) DEFAULT NULL,
@@ -53,25 +98,22 @@ CREATE TABLE `room_types` (
   `room_price` int DEFAULT NULL,
   `room_add` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `room_types`
 --
 
-LOCK TABLES `room_types` WRITE;
-/*!40000 ALTER TABLE `room_types` DISABLE KEYS */;
-INSERT INTO `room_types` VALUES ('flat1636261637218448','room16363025225972493','jnm','9249_U53Gnvy.png',534,'jn');
-/*!40000 ALTER TABLE `room_types` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `room_types` (`flat_id`, `room_id`, `room_desc`, `room_img`, `room_price`, `room_add`) VALUES
+('flat1636261637218448', 'room16363025225972493', 'jnm', '9249_U53Gnvy.png', 534, 'jn'),
+('flat16362616419350414', 'room1636606116807153', 'this isnsdm', 'IMG_20210813_111917.jpg', 7838, 'jdffjwnj'),
+('flat16362616419350414', 'room16366061714819489', 'fgdnjn', '9249 (1).png', 678, 'jnjnlj');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `user`
 --
 
-DROP TABLE IF EXISTS `user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
   `user_id` varchar(30) DEFAULT NULL,
   `name` varchar(50) DEFAULT NULL,
@@ -81,25 +123,31 @@ CREATE TABLE `user` (
   `status` int DEFAULT NULL,
   `createdAt` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `user`
 --
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES ('user16363040256597939','Abhsihek','akaushal451@gmail.com','810322','Abhi@123',0,'16363040256598072'),('user1636304058152915','Abhsihek','akaushal451@gmail.com','810322','Abhi@123',0,'16363040581529286'),('user16363040817495918','Abhsihek','akaushal451@gmail.com','810322','Abhi@123',0,'1636304081749603');
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+INSERT INTO `user` (`user_id`, `name`, `email`, `mobile`, `password`, `status`, `createdAt`) VALUES
+('user16363040256597939', 'Abhsihek', 'akaushal451@gmail.com', '810322', 'Abhi@123', 0, '16363040256598072'),
+('user1636304058152915', 'Abhsihek', 'akaushal451@gmail.com', '810322', 'Abhi@123', 0, '16363040581529286'),
+('user16363040817495918', 'Abhsihek', 'akaushal451@gmail.com', '810322', 'Abhi@123', 0, '1636304081749603'),
+('user16364731911131406', 'Aman', 'aman@gmail.com', '35894584', 'Aman@123', 0, '16364731911131835'),
+('user16364732937812412', 'anshul', 'anshul@gmail.com', '', 'Anshul@123', 0, '16364732937812648'),
+('user16364733557548337', 'gagan', 'gagan@gmail.com', '39435345', 'Gagan@123', 0, '16364733557548425'),
+('user16364734527705503', 'aaksh', 'akash@gmail.com', '34852', 'Aakash@123', 0, '16364734527705617');
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `history`
+--
+ALTER TABLE `history`
+  ADD PRIMARY KEY (`order_id`);
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2021-11-08 12:23:37

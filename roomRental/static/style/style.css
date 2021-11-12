@@ -43,3 +43,14 @@ input,select,textarea{
     border-radius: 10px !important;
     border: 3px solid var(--primaryDark);
 }
+
+#footer{
+    background-color: var(--primaryDark);
+}
+.dot {
+    height: 4px;
+    width: 4px;
+    background-color:var(--primaryLightColor);
+    border-radius: 50%;
+    display: inline-block;
+}
