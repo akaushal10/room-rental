@@ -133,28 +133,24 @@ class User:
                     response= redirect(curl+"login/")
             return response
         else:
-            order_id = "order"+getTimeStamp()
-            room_id = request.POST.get('room_id')
-            user_id = request.POST.get('user_id')
+            self.order_id = "order"+getTimeStamp()
+            self.room_id = request.POST.get('room_id')
+            self.user_id = request.POST.get('user_id')
+            self.price = request.POST.get('price')
             joining_date = request.POST.get('joining_date')       
             total_months = int(request.POST.get('total_months'))
             temp_date = datetime.strptime(joining_date, "%Y-%m-%d")
-            price = 10
-            joining_date = temp_date.strftime('%d-%m-%Y')
+            self.joining_date = temp_date.strftime('%d-%m-%Y')
             leaving_date = temp_date
             for i in range(total_months):
                 leaving_date = inc_date(leaving_date)
-            leaving_date = leaving_date.strftime('%d-%m-%Y')
-            booking_date = datetime.today().strftime('%d-%m-%Y')
-            trxn_id = "dfnjskffdjmfdgjfd"
-            bookRoomQuery = "insert into history (order_id,room_id,user_id,joining_date,booking_date,leaving_date,trxn_id) values('%s','%s','%s','%s','%s','%s','%s')"%(order_id,room_id,user_id,joining_date,booking_date,leaving_date,trxn_id)
-            models.cursor.execute(bookRoomQuery)
-            models.db.commit()
+            self.leaving_date = leaving_date.strftime('%d-%m-%Y')
+            self.booking_date = datetime.today().strftime('%d-%m-%Y')
             self.param_dict={
                 'MID':MID,
-                'ORDER_ID':order_id,
-                'TXN_AMOUNT':str(price*total_months),
-                'CUST_ID':user_id,
+                'ORDER_ID':self.order_id,
+                'TXN_AMOUNT':str(self.price*total_months),
+                'CUST_ID':self.user_id,
                 'INDUSTRY_TYPE_ID':'Retail',
                 'WEBSITE':'WEBSTAGING',
                 'CHANNEL_ID':'WEB',
@@ -173,9 +169,19 @@ class User:
                 response_dict[i]=form[i]
                 if i == 'CHECKSUMHASH' :
                     checksum=form[i]
+            print(response_dict)
             verify=paytm.verify_checksum(response_dict,MERCHANT_KEY,checksum)
-            print("verify : ",verify)
-        return redirect(curl+'myuser/history')
+            if(verify):
+                bookRoomQuery = "insert into history (order_id,room_id,user_id,joining_date,booking_date,leaving_date,trxn_id) values('%s','%s','%s','%s','%s','%s','%s')"%(self.order_id,self.room_id,self.user_id,self.joining_date,self.booking_date,self.leaving_date,response_dict['TXNID'])
+                models.cursor.execute(bookRoomQuery)
+                models.db.commit()
+
+                trxnQuery = "insert into transactions (BANKNAME,BANKTXNID,CURRENCY,PAYMENTMODE,MID,TXNID,TXNAMOUNT,ORDERID,TXNDATE) values('%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(response_dict['BANKNAME'],response_dict['BANKTXNID'],response_dict['CURRENCY'],response_dict['PAYMENTMODE'],response_dict['MID'],response_dict['TXNID'],response_dict['TXNAMOUNT'],response_dict['ORDERID'],response_dict['TXNDATE'])
+                models.cursor.execute(trxnQuery)
+                models.db.commit()
+                return redirect(curl+'myuser/history')
+            else:
+                return redirect(curl+'myuser')
 
     def logout(self,request):
         if 'token' in request.COOKIES:

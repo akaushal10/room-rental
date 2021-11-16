@@ -1,0 +1,21 @@
+{% extends 'base.html' %} {% block navbar %} {% if isLogin %} {% include "user/userNavbar.html" %} {% else %} {% include "navbar.html" %} {% endif %} {% endblock %} {% block container %}
+<div class="accordion accordion-flush" id="accordionFlushExample">
+{% for help in helps %}
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-head-{{help.0}}">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-{{help.0}}" aria-expanded="false" aria-controls="flush-collapse-{{help.0}}">
+        {{help.1}}
+      </button>
+    </h2>
+    <div id="flush-collapse-{{help.0}}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+      <div class="accordion-body">{{help.2}}</div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+<script>
+  $(document).ready(() => {
+    $("#room-nav").addClass("activeNav");
+  });
+</script>
+{% endblock %}

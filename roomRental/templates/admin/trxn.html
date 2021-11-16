@@ -1,0 +1,33 @@
+{% extends 'admin/adminHome.html' %} {% block container %}
+<div class=" w-100 my-5" style="overflow-x:auto">
+<table class="table table-hover history-table small text-center ">
+  <thead>
+    <tr>
+      <th>Bank Name</th>
+      <th>Bank Trxn ID</th>
+      <th>Currency</th>
+      <th>Mode</th>
+      <th>Mercahnt ID</th>
+      <th>Trxn ID</th>
+      <th>Amount</th>
+      <th>Order Id</th>
+      <th>Date </th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for trxn in trxns %}
+    <tr>
+    {% for detail in trxn %}
+      <td>{{detail}}</td>
+    {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+<script>
+  $(document).ready(()=>{
+    $('#history-nav').addClass('activeNav')    
+  })
+</script>
+{% endblock %}

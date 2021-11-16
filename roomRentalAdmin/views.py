@@ -7,6 +7,9 @@ from django.core.files.storage import FileSystemStorage
 from roomRental import models
 import time
 import jwt
+from django.views.decorators.csrf import csrf_exempt
+from django.http import QueryDict
+
 
 curl=settings.CURRENT_URL
 media_url=settings.MEDIA_URL 
@@ -25,8 +28,12 @@ class RoomRentalAdmin:
         self.adminToken = False
         self.admin={}
     def adminHome(self,request):
+        getHistory = "select * from history"
+        models.cursor.execute(getHistory)
+        rooms = models.cursor.fetchall()
         if self.adminToken:
-            return redirect(curl+'myadmin/')
+            print("self.tokken")
+            response=render(request, "admin/adminHome.html",{'curl': curl, 'media_url': media_url,"history":rooms})
         else:            
             if 'adminToken' in request.COOKIES:
                 token = request.COOKIES["adminToken"]
@@ -36,14 +43,15 @@ class RoomRentalAdmin:
                 admin=models.cursor.fetchall()
                 if len(admin)>0:
                     self.admin = admin[0]
-                    response=render(request, "admin/adminHome.html",{'curl': curl, 'media_url': media_url})
+                    print("if conditi")
+                    response=render(request, "admin/adminHome.html",{'curl': curl, 'media_url': media_url,"history":rooms})
                 else:
                     response = redirect(curl)
                     response.delete_cookie('adminToken')
                 return response
             else:
                 response=redirect(curl)
-                return response
+        return response
 
     def flat(self,request):
         if request.method=='GET':
@@ -60,6 +68,39 @@ class RoomRentalAdmin:
                 return JsonResponse({"message":"Falt added succesfully...!"})
             except:
                 return JsonResponse({"error":"Something went wrong...!"})
+
+    @csrf_exempt
+    def help(self,request):
+        getHelpQuery = "select * from helps"
+        models.cursor.execute(getHelpQuery)
+        helps = models.cursor.fetchall()
+        if request.method=='GET':
+            response=render(request, "admin/addHelp.html",{'curl': curl, 'media_url': media_url,"helps":helps})
+            return response
+        elif request.method=='POST':
+            try:
+                question = request.POST.get('question')
+                answer = request.POST.get('answer')
+                helpId = "help"+getTimeStamp()
+                insertHelp = "insert into helps values('%s','%s','%s')"%(helpId,question,answer)
+                models.cursor.execute(insertHelp)
+                models.db.commit()
+                return JsonResponse({"message":"Help added succesfully...!"})
+            except:
+                return JsonResponse({"error":"Something went wrong...!"})
+        else:
+            # try:
+            print(QueryDict(request.body).get("helpId"))
+            helpId = request.DELETE.get('helpId')
+            print("helpId : ",helpId)
+            deleteHelp = "delete from helps where help_id='%s'"%(helpId)
+            models.cursor.execute(deleteHelp)
+            models.db.commit()
+            return JsonResponse({"error":"Help deleted...!"})
+            # except:
+            #     return JsonResponse({"error":"Something went wrong...!"})
+
+
     def room(self,request):
         flat_query = "select * from flat_types"
         models.cursor.execute(flat_query)
@@ -82,21 +123,48 @@ class RoomRentalAdmin:
                 return JsonResponse({"message":"Room added succesfully...!"})
             except:
                 return JsonResponse({"error":"Something went wrong...!"})
-
         elif request.method=='DELETE':
             return JsonResponse({"output":0})
         else:
             return JsonResponse({"output":0})
-    def history(self,request):
-        getHistory = "select * from history"
-        models.cursor.execute(getHistory)
-        rooms = models.cursor.fetchall()
+
+    @csrf_exempt
+    def manageRoom(self,request):
+        getRoomsQuery =  "select * from room_types inner join flat_types on flat_types.flat_id=room_types.flat_id;"
+        models.cursor.execute(getRoomsQuery)
+        roomData = models.cursor.fetchall()
+
+        flat_query = "select * from flat_types"
+        models.cursor.execute(flat_query)
+        flatList = models.cursor.fetchall()
+
+        if request.method=='GET':
+            return render(request,"admin/manageRoom.html",{'curl':curl,'rooms':roomData,'flatList':flatList})
+        elif request.method=='POST':
+            flat_id=request.POST.get('flat_id')
+            room_id=request.POST.get('room_id')
+            room_desc=request.POST.get('room_desc')
+            room_add=request.POST.get('room_add')
+            room_price=request.POST.get('room_price')
+            updateRoomQuery = "update room_types set room_desc='%s',room_add='%s',room_price='%s',flat_id='%s' where room_id='%s' "%(room_desc,room_add,int(room_price),flat_id,room_id)
+            models.cursor.execute(updateRoomQuery)
+            models.db.commit()
+            return JsonResponse({"message":"Room updated succesfully...!"})
+            # except:
+            #     return JsonResponse({"error":"Something went wrong...!"})    
+        else:
+            return JsonResponse({"error":"Something went wrong...!"})    
+
+    def trxn(self,request):
+        getTransactions = "select * from transactions"
+        models.cursor.execute(getTransactions)
+        trxns = models.cursor.fetchall()
         if self.adminToken:
-            response=render(request, "admin/history.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"history":rooms})
+            response=render(request, "admin/trxn.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"trxns":trxns})
         else:
             if 'adminToken' in request.COOKIES:
                 self.adminToken = request.COOKIES["adminToken"]
-                response=render(request, "admin/history.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"history":rooms})
+                response=render(request, "admin/trxn.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"trxns":trxns})
             else:
                 response= redirect(curl)
         return response

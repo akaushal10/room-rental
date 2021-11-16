@@ -151,6 +151,24 @@ class Guest:
                 flats = models.cursor.fetchall()
                 response=render(request, "flatType.html",{'curl': curl, 'media_url': media_url,"flats":flats})
         return response
+    def about(self,request):
+        if self.token:
+            response= redirect(curl+"myuser/about")
+        else:
+            if 'token' in request.COOKIES:
+                response= redirect(curl+"myuser/about")
+            else:
+                response=render(request, "about.html",{'curl': curl, 'media_url': media_url,})
+        return response
+    def help(self,request):
+        if self.token:
+            response= redirect(curl+"myuser/help")
+        else:
+            if 'token' in request.COOKIES:
+                response= redirect(curl+"myuser/help")
+            else:
+                response=render(request, "help.html",{'curl': curl, 'media_url': media_url,})
+        return response
 
     def rooms(self,request):
         flatId = request.GET.get('flatId')

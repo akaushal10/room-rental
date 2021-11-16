@@ -1,0 +1,180 @@
+{% extends 'admin/adminHome.html' %} {% block container %}
+
+<div class="row p-5 mx-0">
+  <table class="table  table-hover room-table">
+    <thead>
+      <tr>
+        <th>Room Id</th>
+        <th>Flat Type</th>
+
+        <th>Price</th>
+
+        <th>Address</th>
+
+        <th class="text-center">Update</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for room in rooms %}
+      <tr>
+        <td>{{room.1}}</td>
+        <td>{{room.7}}</td>
+        <td>{{room.4}}</td>
+        <td>{{room.5}}</td>
+        <td class="text-center">
+          <button class="updateBotton" onclick="updateRoom({'room_id':'{{room.1}}','room_desc':'{{room.2}}','room_price':'{{room.4}}','room_add':'{{room.5}}',flat_id:'{{room.0}}'})"><i class="fas fa-pencil-alt"></i></button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div
+    class="modal fade"
+    id="updateRoomModal"
+    tabindex="-1"
+    aria-labelledby="updateRoomModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog  modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary-dark">
+          <h5 class="modal-title text-primary-light" id="updateRoomModalLabel">Update Room</h5>
+          <button
+            type="button"
+            class="btn-close text-primary-light text-light"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body form-light ">
+          <form
+            id="update-room"
+            enctype="multipart/form-data"
+            class="row mx-auto rounded"
+            novalidate
+          >
+            {%csrf_token%}
+            <input type="hidden" id="room-id" name="room_id" />
+            <div class="col-6 my-3">
+              <label class="form-label" for="flat-id"
+                >Flat Type</label
+              >
+              <select
+                class="custom-select col-11 ml-3 form-control"
+                name="flat_id"
+                id="flat-id"
+              >
+                <option selected>Select Flat</option>
+                {% for flat in flatList %}
+                <option value="{{flat.0}}">{{flat.1}}</option>
+                {% endfor %}
+              </select>
+              <div class="ml-3 invalid-feedback">
+                Please fill out this field.
+              </div>
+            </div>
+                        <div class="col-6 my-3">
+              <label for="room-price" class="form-label">Room Price</label>
+              <input
+                type="text"
+                class="form-control"
+                id="room-price"
+                name="room_price"
+                placeholder="Enter Room Price"
+                required
+              />
+              <div class="invalid-feedback">Please enter valid room price.</div>
+              <div class="valid-feedback">Looks good.</div>
+            </div>
+
+            <div class="col-6 my-3">
+              <label for="room-desc" class="form-label">Room Description</label>
+              <textarea
+                rows="3"
+                class="form-control"
+                name="room_desc"
+                id="room-desc"
+                placeholder="Enter Room Description"
+                required
+              ></textarea>
+              <div class="invalid-feedback">
+                Please enter valid room description.
+              </div>
+              <div class="valid-feedback">Looks good.</div>
+            </div>
+
+            <div class="col-6 my-3">
+              <label for="room-add" class="form-label">Room Address</label>
+              <textarea
+                rows="3"
+                class="form-control"
+                name="room_add"
+                id="room-add"
+                placeholder="Enter Room Address"
+                required
+              ></textarea>
+              <div class="invalid-feedback">
+                Please enter valid room Address.
+              </div>
+              <div class="valid-feedback">Looks good.</div>
+            </div>
+            <div class="col-12 my-3 text-center">
+              <button class="mx-auto btn btn-success">Update Flat</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(() => {
+    $("#room-nav").addClass("activeNav");
+  })
+  var updateRoomModal = new bootstrap.Modal(document.getElementById('updateRoomModal'))
+  const updateRoom = (roomData)=>{
+    $('#room-desc').val(roomData.room_desc)
+    $('#room-add').val(roomData.room_add)
+    $('#flat-id').val(roomData.flat_id)
+    $('#room-id').val(roomData.room_id)
+    $('#room-price').val(roomData.room_price)
+    updateRoomModal.show()
+    console.log(roomData)
+  }
+  const addFlat = (event) => {
+    event.preventDefault();
+    var formData = new FormData();
+    formData.append("flat_id", $("#flat-id").val());
+    formData.append("room_id", $("#room-id").val());
+    formData.append("room_desc", $("#room-desc").val());
+    formData.append("room_price", $("#room-price").val());
+    formData.append("room_add", $("#room-add").val());
+    formData.append(
+      "csrfmiddlewaretoken",
+      $("input[name=csrfmiddlewaretoken]").val()
+    );
+    fetch("{{curl}}myadmin/manageRoom/", {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          updateRoomModal.hide()
+          $("#toast-body-error").html(data.error);
+          $("#error-toast").toast("show");
+        } else {
+          updateRoomModal.hide()
+          $("#toast-body-success").html(data.message);
+          $("#success-toast").toast("show");
+          $("#update-room").trigger("reset");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  $("#update-room").submit(addFlat);
+</script>
+{% endblock %}

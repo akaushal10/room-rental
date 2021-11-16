@@ -69,7 +69,6 @@
   {% else %}
   <div class="no-data"> No room found</div>
   {% endif %}
-
   </div>
 </div>
 <script>
@@ -99,7 +98,7 @@
           $('#error-toast').toast("show")
         }else{
           $('#toast-body-success').html(json.message)
-          $("#myToast").toast("show");
+          $("#success-toast").toast("show");
           window.location = json.curl+"myuser/"
         }
       })

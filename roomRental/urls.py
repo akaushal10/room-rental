@@ -26,6 +26,8 @@ urlpatterns = [
     path('adminLogin/',guest.adminLogin),
     path('login/',guest.login),
     path('signup/',guest.signup),
+    path('about/',guest.about),
+    path('help/',guest.help),
     path('flatType/',guest.flatType),
     path('rooms/',guest.rooms),
     path('myadmin/',include('roomRentalAdmin.urls')),

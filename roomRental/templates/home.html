@@ -1,18 +1,23 @@
 {% extends 'base.html' %} {% load static %} {% block container %}
 <style>
   .home-header {
-    background-image: url("https://play-zelo-production.s3.ap-south-1.amazonaws.com/uploads/center_caption_photo/photo/5dc50d6609ba996c981679b6/h400_1.jpg");
-    /* background-image:url('{% static 'images/home-page-header.jpg' %}');*/
+    /*    background-image: url("https://play-zelo-production.s3.ap-south-1.amazonaws.com/uploads/center_caption_photo/photo/5dc50d6609ba996c981679b6/h400_1.jpg");*/
+    background-image: url("{% static "images/1.jpg" %}");
     background-size: cover;
     height: 100vh;
     width: 100%;
   }
 </style>
-<div class="home-header"><h1 class="display-3 fw-bold w-50 mx-5 py-5">
-    <span class="bg-light">Book your rooms at Effective cost and get optimum facilities.</span></h1></div>
+<div class="home-header">
+  <h1 class="display-3 fw-bold w-50 mx-5 py-5">
+    <span class=""
+      >Book your rooms at Effective cost and get optimum facilities.</span
+    >
+  </h1>
+</div>
 <div class="w-100">
   <div class="row">
-    <div class=" col-10 mx-auto my-3">
+    <div class="col-10 mx-auto my-3">
       <span
         style="border-color: var(--primaryDark) !important"
         class="px-2 border-2 border-bottom h1"
@@ -137,6 +142,23 @@
     </div>
   </div>
 </div>
+<div class="p-5 d-flex justify-content-between align-items-center">
+  <div class="w-50">
+    <img src="{% static "images/3.jpg" %}" class="img-fluid img-thumbnail"/>
+  </div>
+  <div class="display-2 fw-bold px-5 mx-5">
+    <div class="text-center">Rooms for Students</div>
+  </div>
+</div>
+<div class="p-5 d-flex justify-content-between align-items-center">
+  <div class="display-2 fw-bold px-5 mx-5">
+    <div>Bunglows</div>
+  </div>
+  <div class="w-50">
+    <img src="{% static "images/2.jpg" %}" class="img-fluid img-thumbnail"/>
+  </div>
+</div>
+
 <script>
   $(document).ready(() => {
     $("#home-nav").addClass("activeNav");

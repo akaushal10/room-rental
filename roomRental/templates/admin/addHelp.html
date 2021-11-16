@@ -1,0 +1,129 @@
+{% extends 'admin/adminHome.html' %} {% block container %}
+<div class="row px-5 my-4 mx-0">
+  <form
+    id="add-help"
+    enctype="multipart/form-data"
+    class=" row mx-auto rounded p-3 "
+    novalidate
+  >
+    {%csrf_token %}
+    <div class="d-flex justify-content-around  align-items-center">
+    <div class="w-100">
+      <textarea
+        rows="4"
+        class="form-control"
+        name="help_question"
+        id="help-question"
+        placeholder="Enter Help Question"
+        required
+      ></textarea>
+      <div class="invalid-feedback">Please enter valid question.</div>
+      <div class="valid-feedback">Looks good.</div>
+    </div>
+
+    <div class="w-100 mx-5">
+      <textarea
+        rows="4"
+        class="form-control"
+        name="help_answer"
+        id="help-answer"
+        placeholder="Enter Help Answer"
+        required
+      ></textarea>
+      <div class="invalid-feedback">Please enter valid answer.</div>
+      <div class="valid-feedback">Looks good.</div>
+    </div>
+
+    <div class="w-50 text-center">
+      <button class="mx-auto btn btn-success">Add Help</button>
+    </div>
+    </div>
+  </form>
+</div>
+<div class="accordion accordion-flush my-4 mx-5" id="accordionFlushExample">
+{% for help in helps %}
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-head-{{help.0}}">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-{{help.0}}" aria-expanded="false" aria-controls="flush-collapse-{{help.0}}">
+        {{help.1}}
+      </button>
+    </h2>
+    <div id="flush-collapse-{{help.0}}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+      <div class="accordion-body">{{help.2}}</div>
+      <div class="text-end p-4">
+        <button class="btn btn-danger" onclick="deleteHelp('{{help.0}}')">Delete</button>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+<script>
+  $(document).ready(()=>{
+    $('#help-nav').addClass('activeNav')    
+  })
+  var file;
+  $('input[type="file"]').change(function (e) {
+    file = e.target.files[0];
+  });
+  const deleteHelp = (helpId) => {
+    event.preventDefault();
+    var formData = new FormData();
+    formData.append("helpId", helpId);
+    formData.append(
+      "csrfmiddlewaretoken",
+      $("input[name=csrfmiddlewaretoken]").val()
+    );
+    fetch("{{curl}}myadmin/help/", {
+      method: "DELETE",
+      body: formData,
+      credentials: "same-origin",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if(data.error){ 
+          $('#toast-body-error').html(data.error)
+          $('#error-toast').toast("show")
+        }else{
+          $('#toast-body-success').html(data.message)
+          $("#success-toast").toast("show");
+          $('#add-help').trigger("reset");
+        }
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const addHelp = (event) => {
+    event.preventDefault();
+    var formData = new FormData();
+    formData.append("question", $("#help-question").val());
+    formData.append("answer", $("#help-answer").val());
+    formData.append(
+      "csrfmiddlewaretoken",
+      $("input[name=csrfmiddlewaretoken]").val()
+    );
+    fetch("{{curl}}myadmin/help/", {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if(data.error){ 
+          $('#toast-body-error').html(data.error)
+          $('#error-toast').toast("show")
+        }else{
+          $('#toast-body-success').html(data.message)
+          $("#success-toast").toast("show");
+          $('#add-help').trigger("reset");
+        }
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  $("#add-help").submit(addHelp);
+</script>
+{% endblock %}

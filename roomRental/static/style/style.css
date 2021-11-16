@@ -38,7 +38,7 @@ input,select,textarea{
 .activeNav a{
     color: var(--primaryDark) !important;
 }
-.history-table{
+.history-table,.room-table{
     background-color: var(--primaryLightColor);
     border-radius: 10px !important;
     border: 3px solid var(--primaryDark);
@@ -53,4 +53,15 @@ input,select,textarea{
     background-color:var(--primaryLightColor);
     border-radius: 50%;
     display: inline-block;
+}
+.bg-primary-dark{
+    background-color: var(--primaryDark) !important;
+}
+.text-primary-light{
+    color: var(--primaryLightColor) !important;
+}
+.updateBotton{
+    background-color: transparent !important;
+    border: 0px;
+    box-shadow: 0px;
 }
