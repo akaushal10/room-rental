@@ -40,14 +40,17 @@
       </select>
       <div class="invalid-feedback">Please select Gender</div>
     </div>
-    <div class="col-12 my-2">
-      <label for="signup-password" class="form-label">Password</label>
+    <div class="col-12 my-2  input-group">
+      <div class="col-12">
+        <label for="signup-password" class="form-label">Password</label>
+      </div>
       <input
         type="password"
         class="form-control"
         id="signup-password"
         required
       />
+      <button class="btn btn-outline-secondary" type="button" id="show-password" ><i class="fas fa-eye-slash"></i></button>
       <div class="invalid-feedback">Please provide a valid password.</div>
       <div class="valid-feedback">Looks good.</div>
     </div>
@@ -109,6 +112,20 @@
         console.log(err);
       });
   };
+  const togglePassword = () =>{
+      var x = document.getElementById("signup-password");
+      if (x.type === "password") {
+        x.type = "text";
+        $("#show-password i").removeClass("fa-eye-slash")
+        $("#show-password i").addClass("fa-eye")
+      } else {
+        x.type = "password";  
+        $("#show-password i").removeClass("fa-eye")
+        $("#show-password i").addClass("fa-eye-slash")
+      }
+  }
+  $("#show-password").click(togglePassword)
+
   $("#signup-form").submit(authUser);
 </script>
 {% endblock %}

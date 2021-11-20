@@ -1,5 +1,4 @@
-{% extends 'base.html' %} {% block navbar %} {% if isLogin %} {% include
-"user/userNavbar.html" %} {% else %} {% include "navbar.html" %} {% endif %} {% endblock %} {% block container %}
+{% extends 'base.html' %} {% block navbar %} {% if isLogin %} {% include "user/userNavbar.html" %} {% else %} {% include "navbar.html" %} {% endif %} {% endblock %} {% block container %}
 <div>
   <div class="display-2 text-center fw-bolder my-5">
     Room Rental System 2021-22
@@ -29,7 +28,7 @@
 </div>
 <script>
   $(document).ready(() => {
-    $("#room-nav").addClass("activeNav");
+    $("#about-nav").addClass("activeNav");
   });
 </script>
 {% endblock %}

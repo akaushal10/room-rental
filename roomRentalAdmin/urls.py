@@ -7,6 +7,7 @@ urlpatterns=[
     path('addFlat/',adminObj.flat),
     path('addRoom/',adminObj.room),
     path('help/',adminObj.help),
+    path('getOrderHistory/',adminObj.getOrderHistory),
     path('manageFlat/',adminObj.flat),
     path('manageRoom/',adminObj.manageRoom),
     path('trxn/',adminObj.trxn),

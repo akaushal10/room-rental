@@ -167,7 +167,10 @@ class Guest:
             if 'token' in request.COOKIES:
                 response= redirect(curl+"myuser/help")
             else:
-                response=render(request, "help.html",{'curl': curl, 'media_url': media_url,})
+                getHelpQuery = "select * from helps"
+                models.cursor.execute(getHelpQuery)
+                helps = models.cursor.fetchall()
+                response=render(request, "help.html",{'curl': curl, 'media_url': media_url,"helps":helps})
         return response
 
     def rooms(self,request):
@@ -178,8 +181,11 @@ class Guest:
             if 'token' in request.COOKIES:
                 response= redirect(curl+"myuser/flatType")
             else:
+                getFlatName = "select flat_name from flat_types where flat_id = '%s'"%(flatId)
+                models.cursor.execute(getFlatName)
+                flatName = models.cursor.fetchall()[0][0]
                 getRoomsQuery = "select * from room_types where flat_id='%s'"%(flatId)
                 models.cursor.execute(getRoomsQuery)
                 rooms = models.cursor.fetchall()
-                response=render(request, "rooms.html",{'curl': curl, 'media_url': media_url,"rooms":rooms})
+                response=render(request, "rooms.html",{'curl': curl, 'media_url': media_url,"rooms":rooms,"flatName":flatName})
         return response

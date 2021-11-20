@@ -13,14 +13,18 @@
       <div class="invalid-feedback">Please provide a valid email.</div>
       <div class="valid-feedback">Looks good.</div>
     </div>
-    <div class="col-12 my-3">
+    <div class="col-12 my-3  input-group">
+      <div class="col-12">
       <label for="login-password" class="form-label">Password</label>
+      </div>
+
       <input
         type="password"
         class="form-control"
         id="login-password"
         required
       />
+            <button class="btn btn-outline-secondary" type="button" id="show-password" ><i class="fas fa-eye-slash"></i></button>
       <div class="invalid-feedback">Please provide a valid password.</div>
       <div class="valid-feedback">Looks good.</div>
     </div>
@@ -56,7 +60,7 @@
           $("#error-toast").toast("show");
         } else {
           $("#toast-body-success").html(json.message);
-          $("#myToast").toast("show");
+          $("#success-toast").toast("show");
           window.location = json.curl + "myadmin/";
         }
       })
@@ -64,6 +68,19 @@
         console.log(err);
       });
   };
+    const togglePassword = () =>{
+    var x = document.getElementById("login-password");
+    if (x.type === "password") {
+      x.type = "text";
+      $("#show-password i").removeClass("fa-eye-slash")
+      $("#show-password i").addClass("fa-eye")
+    } else {
+      x.type = "password";  
+      $("#show-password i").removeClass("fa-eye")
+      $("#show-password i").addClass("fa-eye-slash")
+    }
+  }
+  $("#show-password").click(togglePassword)
   $("#login-form").submit(authUser);
 </script>
 {% endblock %}

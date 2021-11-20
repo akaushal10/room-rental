@@ -1,32 +1,124 @@
 {% extends 'base.html' %} {% block navbar %} {% include "admin/adminNavbar.html" %} {% endblock %} {% block container %}
-<div class=" w-100 px-4 my-5">
-<table class="table table-hover history-table ">
-  <thead>
-    <tr>
-      <th>Order id</th>
-      <th>Room id</th>
-      <th>Userid</th>
-      <th>Joining date</th>
-      <th>Booking date</th>
-      <th>Leaving date</th>
-      <th>Transaction Id</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for room in history %}
-    <tr>
-    {% for detail in room %}
-      <td>{{detail}}</td>
-    {% endfor %}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="w-100 px-4 my-5">
+  {%csrf_token%}
+  <table class="table table-hover history-table">
+    <thead>
+      <tr>
+        <th>Userid</th>
+        <th>Joining date</th>
+        <th>Leaving date</th>
+        <th>Booking date</th>
+        <th>Order id</th>
+        <th>Transaction Id</th>
+        <th>Room id</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for room in history %}
+      <tr onclick="viewHostoryData('{{room.0}}')">
+        <td>{{room.2}}</td>
+        <td>{{room.3}}</td>
+        <td>{{room.5}}</td>
+        <td>{{room.4}}</td>
+        <td>{{room.0}}</td>
+        <td>{{room.6}}</td>
+        <td>{{room.1}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
+<div
+  class="modal fade"
+  id="showHistoryModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">
+          Booking ID : <span id="modal-booking-id"></span>
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <h6>Room Address : <span id="models-room-address"></span></h6>
+        <div>Booked By : <span id="models-user-name"></span></div>
+        <div>Contact : <span id="models-user-contact"></span></div>
+        <div>Booked On : <span id="models-booked-on"></span></div>
+        <div class="my-3 d-flex justify-content-between align-item-center">
+          <div>
+            <div>Joined ON</div>
+            <div><span id="models-joined-on"></span></div>
+          </div>
+          <div class="text-center align-self-center">--------------------</div>
+          <div>
+            <div>Leave ON</div>
+            <div><span id="models-leave-on"></span></div>
+          </div>
+        </div>
+        <div>Trnx Id : <span id="models-trxn-id"></span></div>
+        <div>Amount : <span id="models-trxn-amount"></span></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
-  $(document).ready(()=>{
-    $('#home-nav').addClass('activeNav')    
-  })
+  $(document).ready(() => {
+    $("#home-nav").addClass("activeNav");
+  });
+  const viewHostoryData = (orderId) => {
+    var showHistoryModal = new bootstrap.Modal(
+      document.getElementById("showHistoryModal")
+    );
+
+    var formData = new FormData();
+    formData.append("orderId", orderId);
+    formData.append(
+      "csrfmiddlewaretoken",
+      $("input[name=csrfmiddlewaretoken]").val()
+    );
+    fetch("{{curl}}myadmin/getOrderHistory/", {
+      method: "POST",
+      body: formData,
+      credentials: "same-origin",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          $("#toast-body-error").html(data.error);
+          $("#error-toast").toast("show");
+        } else {
+          var data = data.data
+          document.getElementById("models-room-address").html = data.address
+          $("#models-room-address").html(data.address)
+          $("#models-user-name").html(data.name)
+          $("#models-user-contact").html(data.contact)
+          $("#models-booked-on").html(data.bookedOn)
+          $("#models-joined-on").html(data.joinedOn)
+          $("#models-leave-on").html(data.leaveOn)
+          $("#models-trxn-id").html(data.trxnId)
+          $("#models-trxn-amount").html(data.trxnAmount)
+          $("#modal-booking-id").html(data.bookingId)
+          showHistoryModal.show()
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 </script>
 {% endblock %}

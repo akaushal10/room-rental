@@ -1,0 +1,21 @@
+1.no scrollbar in front -
+
+3.price not comming proper after selecting , staying months..
+(4.help is not highlihgting whicle selecting- )
+(5.on opening 2 bhk showing - Flat Type 1 BHK)
+(6.after login in via user , about section and contact section not opening )
+*(7.mamage room ,  delete option needed if possible)
+(8.help section have nothing is user login)
+*9.after login in admin then login in user , there is no help section 
+(10.help section is coming when no one has logeed in , but no content is showing )
+(11.eye to show password)
+12.images above flat types of 1bhk 2bhk 3bhk
+(13.delete the section from home page of bunglows and student)
+(14.about and help is not highlighting after login user)
+(15.remove txn tab from admin panel ,, merge them in Home page -  inside order)
+(16. in admin panel - make changes in colums with this series
+- username , joining date , Leaving date , amount Paid , booking date , orderid ,txn id , room id)
+(17. withou login- room book clickin error is coming rather than login page .)
+18. its getting signup without filling password - no error is coming -- we can login with the same also
+(19. popular room 2nd room is not coming properly . )
+(20.remove the whole section after 3rd popular room)

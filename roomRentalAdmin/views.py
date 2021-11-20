@@ -52,6 +52,13 @@ class RoomRentalAdmin:
             else:
                 response=redirect(curl)
         return response
+    def getOrderHistory(self,request):
+        orderId = request.POST.get('orderId')
+        getOrderInfoQuery = "SELECT order_id,joining_date,booking_date,leaving_date,trxn_id,name,mobile,room_add,TXNAMOUNT from history inner join user on history.user_id=user.user_id INNER join room_types on history.room_id=room_types.room_id INNER JOIN transactions ON history.trxn_id=transactions.TXNID WHERE history.order_id='%s'"%(orderId)
+        models.cursor.execute(getOrderInfoQuery)
+        orderInfo = models.cursor.fetchall()[0]
+        print(orderInfo)
+        return JsonResponse({"data":{"address":orderInfo[7],"name":orderInfo[5],"contact":orderInfo[6],"bookedOn":orderInfo[2],"joinedOn":orderInfo[1],"leaveOn":orderInfo[3],"trxnId":orderInfo[4],"trxnAmount":orderInfo[8],"bookingId":orderInfo[0]}})
 
     def flat(self,request):
         if request.method=='GET':

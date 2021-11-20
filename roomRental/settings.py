@@ -142,5 +142,5 @@ JWT_SECURITY_KEY = "roomRentalSystem"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MERCHANT_KEY = "IVqLU9EC%_1szfPo" #Enter your paytm merchant key
-MID = "nrEAbc31174422501459" #Enter your MID
+MERCHANT_KEY = "" #Enter your paytm merchant key
+MID = "" #Enter your MID

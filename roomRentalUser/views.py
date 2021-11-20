@@ -63,6 +63,28 @@ class User:
             else:
                 response= redirect(curl)
                 return response
+    def about(self,request):
+        if self.token:
+            response=render(request, "about.html",{'curl': curl, 'media_url': media_url,"isLogin":True})
+        else:
+            if 'token' in request.COOKIES:
+                response=render(request, "about.html",{'curl': curl, 'media_url': media_url,"isLogin":True})
+            else:
+                response=redirect(curl+"about/")
+        return response
+    def help(self,request):
+        getHelpQuery = "select * from helps"
+        models.cursor.execute(getHelpQuery)
+        helps = models.cursor.fetchall()
+        if self.token:
+            response=render(request, "help.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"helps":helps})
+        else:
+            if 'token' in request.COOKIES:
+                response=render(request, "help.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"helps":helps})
+            else:
+                response=redirect(curl+"help/")
+        return response
+
     def flatType(self,request):
         getFlatQuery = "select * from flat_types"
         models.cursor.execute(getFlatQuery)
@@ -79,15 +101,19 @@ class User:
 
     def rooms(self,request):
         flatId = request.GET.get('flatId')
+        getFlatName = "select flat_name from flat_types where flat_id = '%s'"%(flatId)
+        models.cursor.execute(getFlatName)
+        flatName = models.cursor.fetchall()[0][0]
+
         getRoomsQuery = "select * from room_types where flat_id='%s'"%(flatId)
         models.cursor.execute(getRoomsQuery)
         rooms = models.cursor.fetchall()
         if self.token:
-            response=render(request, "rooms.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"rooms":rooms})
+            response=render(request, "rooms.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"rooms":rooms,"flatName":flatName})
         else:
             if 'token' in request.COOKIES:
                 self.token = request.COOKIES["token"]
-                response=render(request, "rooms.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"rooms":rooms})
+                response=render(request, "rooms.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"rooms":rooms,"flatName":flatName})
             else:
                 response= redirect(curl+"flatType/")
         return response
@@ -111,53 +137,57 @@ class User:
         return response
 
     def bookRoom(self,request):
-        if request.method=='GET':
-            room_id = request.GET.get('roomId') 
-            data = decodeJWTToken(request.COOKIES["token"])
+        if 'token' in request.COOKIES:
+            if request.method=='GET':
+                room_id = request.GET.get('roomId') 
+                data = decodeJWTToken(request.COOKIES["token"])
 
-            getUserQuery="select user_id from user where email='%s' and password='%s' "%(data["email"],data["password"])
-            models.cursor.execute(getUserQuery)
-            userData=models.cursor.fetchall()[0]
+                getUserQuery="select user_id from user where email='%s' and password='%s' "%(data["email"],data["password"])
+                models.cursor.execute(getUserQuery)
+                userData=models.cursor.fetchall()[0]
 
-            getRoomQuery="select * from room_types where room_id='%s'"%(room_id)
-            models.cursor.execute(getRoomQuery)
-            roomData=models.cursor.fetchall()[0]
-            print("userData :",userData,"roomData : ",roomData)
-            if self.token:
-                response=render(request, "user/bookRoom.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"userData":userData,"roomData":roomData})
-            else:
-                if 'token' in request.COOKIES:
-                    self.token = request.COOKIES["token"]
+                getRoomQuery="select * from room_types where room_id='%s'"%(room_id)
+                models.cursor.execute(getRoomQuery)
+                roomData=models.cursor.fetchall()[0]
+                print("userData :",userData,"roomData : ",roomData)
+                if self.token:
                     response=render(request, "user/bookRoom.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"userData":userData,"roomData":roomData})
                 else:
-                    response= redirect(curl+"login/")
-            return response
+                    if 'token' in request.COOKIES:
+                        self.token = request.COOKIES["token"]
+                        response=render(request, "user/bookRoom.html",{'curl': curl, 'media_url': media_url,"isLogin":True,"userData":userData,"roomData":roomData})
+                    else:
+                        response= redirect(curl+"login/")
+                return response
+            else:
+                self.order_id = "order"+getTimeStamp()
+                self.room_id = request.POST.get('room_id')
+                self.user_id = request.POST.get('user_id')
+                self.price = request.POST.get('price')
+                joining_date = request.POST.get('joining_date')       
+                total_months = int(request.POST.get('total_months'))
+                temp_date = datetime.strptime(joining_date, "%Y-%m-%d")
+                self.joining_date = temp_date.strftime('%d-%m-%Y')
+                leaving_date = temp_date
+                for i in range(total_months):
+                    leaving_date = inc_date(leaving_date)
+                self.leaving_date = leaving_date.strftime('%d-%m-%Y')
+                self.booking_date = datetime.today().strftime('%d-%m-%Y')
+                
+                self.param_dict={
+                    'MID':MID,
+                    'ORDER_ID':self.order_id,
+                    'TXN_AMOUNT':str(self.price*total_months),
+                    'CUST_ID':self.user_id,
+                    'INDUSTRY_TYPE_ID':'Retail',
+                    'WEBSITE':'WEBSTAGING',
+                    'CHANNEL_ID':'WEB',
+                    'CALLBACK_URL':curl+'myuser/checkout/',
+                }
+                self.param_dict['CHECKSUMHASH']=paytm.generate_checksum(self.param_dict,MERCHANT_KEY)
+                return JsonResponse({"message":"Room book SuccessFully....!","curl":curl})            
         else:
-            self.order_id = "order"+getTimeStamp()
-            self.room_id = request.POST.get('room_id')
-            self.user_id = request.POST.get('user_id')
-            self.price = request.POST.get('price')
-            joining_date = request.POST.get('joining_date')       
-            total_months = int(request.POST.get('total_months'))
-            temp_date = datetime.strptime(joining_date, "%Y-%m-%d")
-            self.joining_date = temp_date.strftime('%d-%m-%Y')
-            leaving_date = temp_date
-            for i in range(total_months):
-                leaving_date = inc_date(leaving_date)
-            self.leaving_date = leaving_date.strftime('%d-%m-%Y')
-            self.booking_date = datetime.today().strftime('%d-%m-%Y')
-            self.param_dict={
-                'MID':MID,
-                'ORDER_ID':self.order_id,
-                'TXN_AMOUNT':str(self.price*total_months),
-                'CUST_ID':self.user_id,
-                'INDUSTRY_TYPE_ID':'Retail',
-                'WEBSITE':'WEBSTAGING',
-                'CHANNEL_ID':'WEB',
-                'CALLBACK_URL':curl+'myuser/checkout/',
-            }
-            self.param_dict['CHECKSUMHASH']=paytm.generate_checksum(self.param_dict,MERCHANT_KEY)
-            return JsonResponse({"message":"Room book SuccessFully....!","curl":curl})
+            return redirect(curl+"login/")
     @csrf_exempt
     def checkout(self,request):
         if request.method=="GET":

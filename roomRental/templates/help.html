@@ -1,5 +1,5 @@
 {% extends 'base.html' %} {% block navbar %} {% if isLogin %} {% include "user/userNavbar.html" %} {% else %} {% include "navbar.html" %} {% endif %} {% endblock %} {% block container %}
-<div class="accordion accordion-flush" id="accordionFlushExample">
+<div class="accordion accordion-flush my-5 py-5 mx-5" id="accordionFlushExample">
 {% for help in helps %}
   <div class="accordion-item">
     <h2 class="accordion-header" id="flush-head-{{help.0}}">
@@ -15,7 +15,7 @@
 </div>
 <script>
   $(document).ready(() => {
-    $("#room-nav").addClass("activeNav");
+    $("#help-nav").addClass("activeNav");
   });
 </script>
 {% endblock %}
