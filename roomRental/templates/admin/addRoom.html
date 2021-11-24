@@ -90,6 +90,7 @@
   });
   const addFlat = (event) => {
     event.preventDefault();
+    window.scrollTo(0, 0);
     var formData = new FormData();
     formData.append("flat_id", $("#flat-id").val());
     formData.append("room_desc", $("#room-desc").val());
@@ -107,7 +108,7 @@
     })
       .then((response) => response.json())
       .then((data) => {
-                if(data.error){ 
+        if(data.error){ 
           $('#toast-body-error').html(data.error)
           $('#error-toast').toast("show")
         }else{

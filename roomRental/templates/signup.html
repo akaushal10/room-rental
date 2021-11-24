@@ -2,7 +2,7 @@
 <div class="row p-5">
   <form
     id="signup-form"
-    class=" form-light row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow"
+    class=" form-light row col-11 col-md-6 col-lg-4 mx-auto border rounded p-3 shadow needs-validation"
     novalidate
   >
     {% csrf_token %}
@@ -80,38 +80,6 @@
   $(document).ready(()=>{
     $('#signup-nav').addClass('activeNav')    
   })
-  const authUser = (event) => {
-    event.preventDefault();
-    var formData = new FormData();
-    formData.append("name", $("#signup-name").val());
-    formData.append("email", $("#signup-email").val());
-    formData.append("password", $("#signup-password").val());
-    formData.append("mobile", $("#signup-mobile").val());
-    formData.append(
-      "csrfmiddlewaretoken",
-      $("input[name=csrfmiddlewaretoken]").val()
-    );
-
-    fetch("{{curl}}signup/", {
-      method: "POST",
-      body: formData,
-      credentials: "same-origin",
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.error) {
-          $("#toast-body-error").html(json.error);
-          $("#error-toast").toast("show");
-        } else {
-          $("#toast-body-success").html(json.error);
-          $("#success-toast").toast("show");
-          window.location = json.curl + "login/";
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
   const togglePassword = () =>{
       var x = document.getElementById("signup-password");
       if (x.type === "password") {
@@ -126,6 +94,41 @@
   }
   $("#show-password").click(togglePassword)
 
-  $("#signup-form").submit(authUser);
+  $("#signup-form").submit((event) => {
+    event.preventDefault();
+    var formData = new FormData();
+    formData.append("name", $("#signup-name").val());
+    formData.append("email", $("#signup-email").val());
+    formData.append("password", $("#signup-password").val());
+    formData.append("mobile", $("#signup-mobile").val());
+    formData.append(
+      "csrfmiddlewaretoken",
+      $("input[name=csrfmiddlewaretoken]").val()
+    );
+    if($("#signup-name").val()&& $("#signup-email").val()&&$("#signup-password").val()&&$("#signup-mobile").val()){
+      fetch("{{curl}}signup/", {
+        method: "POST",
+        body: formData,
+        credentials: "same-origin",
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          if (json.error) {
+            $("#toast-body-error").html(json.error);
+            $("#error-toast").toast("show");
+          } else {
+            $("#toast-body-success").html(json.error);
+            $("#success-toast").toast("show");
+            window.location = json.curl + "login/";
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }else{
+      $("#toast-body-error").html("Please fill all info");
+      $("#error-toast").toast("show");
+    }
+  });
 </script>
 {% endblock %}

@@ -24,7 +24,7 @@
       <div class="invalid-feedback">Please provide a valid joining date.</div>
       <div class="valid-feedback">Looks good.</div>
     </div>
-    <div class="col-12 my-3">
+    <div class="col-6 my-3">
       <label for="joining-date" class="form-label">Total Months</label>
       <select class="" name="total_months" id="total-months">
         <option value="1" selected>1 months</option>
@@ -41,9 +41,9 @@
         <option value="12">12 months</option>
       </select>
     </div>
-
+    <div class="col-6 my-3"><div class="text-start">X &#8377; <span id="roomPrice">{{roomData.4}}</span></div></div>
     <div class="col-12 my-3 text-center d-flex justify-content-between">
-      <div class="text-start">&#8377; {{roomData.4}}</div>
+      <div class="text-start">Total Price = &#8377; <span id="totalPrice"></span></div>
       <div class="text-end">
         <button type="submit" class="mx-auto btn btn-success">Book Room</button>
       </div>
@@ -53,6 +53,11 @@
 <script>
   $(document).ready(()=>{
     $('#room-nav').addClass('activeNav')    
+    var roomPrice = $("#roomPrice").html()
+    console.log(roomPrice)
+    var totalMonths = $("#total-months").val()
+    console.log(totalMonths)
+    $("#totalPrice").html(parseInt(totalMonths)*parseInt(roomPrice)) 
   })
 
   const bookRoom = (event) => {
@@ -91,7 +96,13 @@
         $('#error-toast').toast("show")
       });
   };
+  const changeMonths =(event)=>{
+    var totalMonths = parseInt(event.target.value)
+    var roomPrice = parseInt($("#roomPrice").html())
+    $("#totalPrice").html(parseInt(totalMonths)*parseInt(roomPrice)) 
+  }
   $("#bookRoom-form").submit(bookRoom);
+  $("#total-months").change(changeMonths)
 </script>
 
 {% endblock %}

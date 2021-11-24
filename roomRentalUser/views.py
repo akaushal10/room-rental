@@ -163,7 +163,7 @@ class User:
                 self.order_id = "order"+getTimeStamp()
                 self.room_id = request.POST.get('room_id')
                 self.user_id = request.POST.get('user_id')
-                self.price = request.POST.get('price')
+                self.price = int(request.POST.get('price'))
                 joining_date = request.POST.get('joining_date')       
                 total_months = int(request.POST.get('total_months'))
                 temp_date = datetime.strptime(joining_date, "%Y-%m-%d")

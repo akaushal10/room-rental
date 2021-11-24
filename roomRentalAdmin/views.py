@@ -81,6 +81,7 @@ class RoomRentalAdmin:
         getHelpQuery = "select * from helps"
         models.cursor.execute(getHelpQuery)
         helps = models.cursor.fetchall()
+        print(request.method)
         if request.method=='GET':
             response=render(request, "admin/addHelp.html",{'curl': curl, 'media_url': media_url,"helps":helps})
             return response
@@ -92,21 +93,19 @@ class RoomRentalAdmin:
                 insertHelp = "insert into helps values('%s','%s','%s')"%(helpId,question,answer)
                 models.cursor.execute(insertHelp)
                 models.db.commit()
-                return JsonResponse({"message":"Help added succesfully...!"})
+                return JsonResponse({"message":"Help added succesfully...!","help":{"id":helpId,"question":question,"answer":answer}})
             except:
                 return JsonResponse({"error":"Something went wrong...!"})
         else:
-            # try:
-            print(QueryDict(request.body).get("helpId"))
-            helpId = request.DELETE.get('helpId')
-            print("helpId : ",helpId)
-            deleteHelp = "delete from helps where help_id='%s'"%(helpId)
-            models.cursor.execute(deleteHelp)
-            models.db.commit()
-            return JsonResponse({"error":"Help deleted...!"})
-            # except:
-            #     return JsonResponse({"error":"Something went wrong...!"})
+            return JsonResponse({"error":"Something went wrong...!"})
 
+    def deleteHelp(self,request):
+        helpId = request.POST.get('helpId')
+        print("helpId : ",helpId)
+        deleteHelp = "delete from helps where help_id='%s'"%(helpId)
+        models.cursor.execute(deleteHelp)
+        models.db.commit()
+        return JsonResponse({"message":"Help deleted...!"})
 
     def room(self,request):
         flat_query = "select * from flat_types"
